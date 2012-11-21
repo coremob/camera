@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+	<title>CoreMob Camera</title>
+	
+	<meta charset="utf-8">
+	
+	<meta name="title" content="HTML5Gram">
+	<meta name="application-name" content="CoreMob Camera">
+	<meta name="viewport" content="width=device-width">
+	
+	<!-- IE10 Tile -->
+    <meta name="msapplication-TileImage" content="images/icons/144x144.png">
+    <meta name="msapplication-TileColor" content="#bada55">
+    
+	<!-- Home Screen icons for iOS, Android, Blackberry etc. -->
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/icons/144x144.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/icons/72x72.png">
+    <link rel="apple-touch-icon-precomposed" href="images/icons/57x57.png">
+    <link rel="shortcut icon" href="images/icons/144x144.png">
+    
+    <link href='http://fonts.googleapis.com/css?family=Niconne' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>	
+	<section id="main">
+		<header>
+			<h1>CoreMobCamera</h1>
+		</header>
+		
+		<p class="errorMessage"></p>
+		<div class="loader" hidden>Processing...</div>
+	    
+	    <section id="thumbnails">
+	    <!-- temp -->
+	    	<div class="thumbnail-wrapper">
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/90/90)"></div>
+	    		<div class="thumb" style="background-image:url(http://placekitten.com/91/91)"></div>
+	    	</div>
+	    </section>
+	    <p id="userAgent" style="font-size:.75rem;"></p>
+	    
+	    <nav>
+	    	<ul>
+	    		<li></li>
+	    		<!-- the camera icon is by icomoon.io -->
+	    		<li class="camera">
+		    		<a onclick="document.getElementById('camera').click();return false;"><img src="images/camera.svg"></a>
+	    		</li>
+	    		<li></li>
+	    	</ul>
+	    	
+	    	<div id="filePickerContainer" style="position:absolute;left: -999px">
+	            <label for="imagefile"></label>
+	            <input type="file" capture=camera accept="image/*" name="camera" id="camera" />
+	        </div>
+	    </nav> 
+	        
+	    <footer>
+		</footer>
+	</section>
+	
+	
+	<!-- Photo Preview -->
+	<section id="photoFrame" hidden>
+		<div id="photoResultContainer">
+			<img id="resultPhoto"/>
+		</div>
+	</section>	
+	
+	
+	<!-- Crop and Resize Modal -->
+	<section id="photoCrop" hidden>
+		<div id="userPhotoCrontainer">
+			<img id="userPhoto"/>
+		</div>
+		<!-- Info -->	
+		<div id="fileinfo" hidden>
+	        <div id="filename"></div>
+	        <div id="filedim"></div>
+	        <div>Cropped dimension is: 612 x 612</div>
+	        
+	        <div class="action-buttons">
+				<button id="cropCancel" class="dismiss">Cancel</button>
+				<button id="cropApply">OK</button>
+			</div>
+	    </div>
+	</section>
+	
+	
+	<!-- Photo Effects -->
+	<section id="filterDrawer" hidden>
+	<nav style="width:100%;">
+		<!-- Filter Effects -->
+		<section class="photo-effects">
+			<div id="reset" class="filter">
+				<div class="filter-tag">Normal</div>
+			</div>
+			<div id="xpro" class="filter">
+				<div class="filter-tag">X-Pro</div>
+			</div>
+			<div id="earlybird" class="filter">
+				<div class="filter-tag">Earlybird</div>
+			</div>
+			<div id="lofi" class="filter">
+				<div class="filter-tag">Lo-fi</div>
+			</div>
+			<div id="sutro" class="filter">
+				<div class="filter-tag">Sutro</div>
+			</div>
+			<div id="nashville" class="filter">
+				<div class="filter-tag">Nashville</div>
+			</div>
+			<div id="toaster" class="filter">
+				<div class="filter-tag">Toaster</div>
+			</div>
+			<div id="inkwell" class="filter">
+				<div class="filter-tag">Inkwell</div>
+			</div>
+
+		</section>
+		<!-- File Upload -->
+		<form id="uploadForm" enctype="multipart/form-data" method="post" action="/upload">
+			<input type="button" class="photo-button save-button" value="Save" id="saveButton" disabled>
+			<input type="button" class="photo-button upload-button" value="Upload" id="uploadButton" disabled>
+		</form>
+	</nav>
+	</section>
+	
+	
+	<section id="photoUpload">
+
+	</section>
+	
+
+	
+	<script defer src="js/main.js"></script>
+	<script defer src="js/photoCrop.js"></script>
+	<script defer src="js/photoFilter.js"></script>
+	<script defer src="js/effects.js"></script>
+</body>
+</html>
