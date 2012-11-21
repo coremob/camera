@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<head>
+	<title>CoreMob Camera</title>
+	
+	<meta charset="utf-8">
+	
+	<meta name="application-name" content="CoreMob Camera">
+	<meta name="viewport" content="width=device-width">
+	
+	<!-- IE10 Tile -->
+    <meta name="msapplication-TileImage" content="images/icons/144x144.png">
+    <meta name="msapplication-TileColor" content="#bada55">
+    
+	<!-- Home Screen icons for iOS, Android, Blackberry etc. -->
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/icons/144x144.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/icons/72x72.png">
+    <link rel="apple-touch-icon-precomposed" href="images/icons/57x57.png">
+    <link rel="shortcut icon" href="images/icons/144x144.png">
+    
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/swiper.css">
+</head>
+<body>	
+	<section id="loader" hidden>Processing...</section>
+	
+	<section id="main">
+		<header>
+			<h1>CoreMob Camera</h1>
+		</header>
+		
+		<!-- <p id="userAgent" style="font-size:.75rem;white-space: nowrap;"></p> -->
+		
+		<section id="warnings">
+			<div id="warningMediaCapture" class="icon-warning high-alert" aria-hidden="true" data-icon="&#xe001;" hidden><span>Your browser does not support <a href="http://www.w3.org/TR/html-media-capture/" target="_blank">HTML Media Capture</a>.</span></div>
+			<div id="warningIndexedDb" class="icon-warning med-alert" aria-hidden="true" data-icon="&#xe001;" hidden><span>Your browser does not support <a href="http://www.w3.org/TR/IndexedDB/" target="_blank">IndexedDB</a>.</span>
+			</div>
+			<div id="warningIndexedDbBlob" class="icon-warning" aria-hidden="true" data-icon="&#xe001;" hidden><span>Your browser can not store <strong>blob</strong> objects into <a href="http://www.w3.org/TR/IndexedDB/" target="_blank">IndexedDB</a>. Storing data URL strings instead.</span>
+			</div>
+		</section>
+	
+		
+		<section id="firstrun" class="thumb" hidden>
+			<p>Get started with HTML5!</p>
+			<div class="arrow-container"></div>
+		</section>
+		
+	    <section id="thumbnails">
+	    	<div class="thumbnail-wrapper">
+	    	</div>
+	    </section>
+	    
+	    <p style="position:fixed; bottom:30px; right:0; ;cursor:pointer; color:#aaa;" id="clearDB">[Test] Delete DB</p>
+	    
+	    <nav>
+    		<!-- the camera icon is by icomoon.io -->
+    		<div class="camera">
+	    		<a onclick="document.getElementById('camera').click();return false;"><img src="images/camera.svg"></a>
+    		</div>
+
+	    	<form id="filePickerContainer" style="position:absolute;left: -999px">
+	            <label for="imagefile"></label>
+	            <!-- in the latest spec, the capture attribute type has been switched to a boolean. -->
+	            <input type="file" capture="camera" accept="image/*" name="camera" id="camera" />
+	        </form>
+	    </nav> 
+	</section>
+	
+	<!-- Gallery Carousel -->
+	<section id="thumbSingleView" hidden>
+		<div id="dismissSingleView">[X]</div>
+		<div class="swiper-container"></div>
+		<div class="pagination"></div>
+	</section>
+	
+	<!-- Crop and Resize -->
+	<section id="photoCrop" hidden>
+		<div id="userPhotoCrontainer">
+			<img id="userPhoto" hidden/>
+		</div>
+		<div class="photoCropControls">
+			<div id="fileinfo" hidden>
+		        <div id="filename"></div>
+		        <div id="filedim"></div>
+		        <div>Cropped dimension is: <span id="textDimension"></span></div>
+		    </div>
+			<div class="action-buttons">
+				<button id="cropCancel" class="dismiss">Cancel</button>
+				<button id="cropApply">OK</button>
+			</div>
+		</div>
+	</section>
+	
+	<!-- Photo Preview -->
+	<section id="photoEffect" hidden>
+		<div id="photoResultContainer">
+			<img id="resultPhoto"/>
+		</div>	
+	
+		<!-- Photo Effects Buttons -->
+		<nav id="filterDrawer" hidden>
+			<!-- Filter Effects -->
+			<section id="filterButtons">
+				<div id="reset" class="filter">
+					<div class="filter-tag">Normal</div>
+				</div>
+				<div id="fluorescent" class="filter">
+					<div class="filter-tag">Fluorescent</div>
+				</div>
+				<div id="nostalgia" class="filter">
+					<div class="filter-tag">Nostalgia</div>
+				</div>
+				<div id="phykos" class="filter">
+					<div class="filter-tag">Phykos</div>
+				</div>
+				<div id="lotus" class="filter">
+					<div class="filter-tag">Lotus</div>
+				</div>
+				<div id="memphis" class="filter">
+					<div class="filter-tag">Memphis</div>
+				</div>
+				<div id="deutlich" class="filter">
+					<div class="filter-tag">Deutlich</div>
+				</div>
+				<div id="sumie" class="filter">
+					<div class="filter-tag">Sumie</div>
+				</div>
+				<div id="rockstar" class="filter">
+					<div class="filter-tag">Rock Star</div>
+				</div>
+			</section>
+			
+			<!-- File Save and Upload -->
+			<form id="uploadForm" enctype="multipart/form-data" method="post" action="/upload">
+				<input type="button" class="photo-button save-button" value="Save in DB" id="saveButton">
+				<input type="button" class="photo-button upload-button" value="Upload" id="uploadButton">
+			</form>
+		</nav>
+	</section>
+	
+	<section id="photoUpload">
+
+	</section>
+	
+	<script defer src="js/util.js"></script>
+	<script defer src="js/iDB.js"></script>
+	<script defer src="js/swiper-1.7.js"></script>
+	<script defer src="js/photoCrop.js"></script>
+	<script defer src="js/photoFilter.js"></script>
+	<script defer src="js/effects.js"></script>
+	<script defer src="js/main.js"></script>
+</body>
+</html>
