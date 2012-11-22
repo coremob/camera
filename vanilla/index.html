@@ -30,7 +30,6 @@
 		</header>
 		
 		<p class="errorMessage"></p>
-		<div class="loader" hidden>Processing...</div>
 	    
 	    <section id="thumbnails">
 	    <!-- temp -->
@@ -79,6 +78,7 @@
 		</footer>
 	</section>
 	
+	<div class="loader" hidden>Processing...</div>
 	
 	<!-- Photo Preview -->
 	<section id="photoFrame" hidden>
@@ -136,11 +136,14 @@
 			<div id="inkwell" class="filter">
 				<div class="filter-tag">Inkwell</div>
 			</div>
+			<div id="fancy" class="filter">
+				<div class="filter-tag">Fancy</div>
+			</div>
 
 		</section>
 		<!-- File Upload -->
 		<form id="uploadForm" enctype="multipart/form-data" method="post" action="/upload">
-			<input type="button" class="photo-button save-button" value="Save" id="saveButton" disabled>
+			<input type="button" class="photo-button save-button" value="Save" id="saveButton" >
 			<input type="button" class="photo-button upload-button" value="Upload" id="uploadButton" disabled>
 		</form>
 	</nav>

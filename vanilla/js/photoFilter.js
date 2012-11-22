@@ -21,6 +21,14 @@ var PhotoFilter = function(imgObj) {
 }
 
 PhotoFilter.prototype = {
+	applyLayer: function(layer) {
+		var layerImg = new Image();
+		layerImg.onload = function() {
+			this.ctx.drawImage(layerImg, 0, 0);
+		}.bind(this)
+		layerImg.src = 'images/effects/' + layer + '.png';
+		this.render();
+	},
 
     filterImage: function(filter, args) {
 	    var data = [this.ctx.getImageData(0, 0, this.c.width, this.c.height)];
@@ -33,13 +41,16 @@ PhotoFilter.prototype = {
     },
     
     render: function() {
-        this.ctx.putImageData(this.pixelData, 0, 0);
+    	if(this.pixelData) {
+	    	this.ctx.putImageData(this.pixelData, 0, 0);
+    	}
         this.imgObj.parentNode.appendChild(this.c);
         this.imgObj.hidden = true;
     },
     
     reset: function() {
-	    this.imgObj.parentNode.appendChild(this.c);
+    	this.ctx.drawImage(this.imgObj, 0, 0);
+    	this.imgObj.parentNode.appendChild(this.c);
         this.imgObj.hidden = true; 
     },
     
@@ -152,3 +163,4 @@ PhotoFilter.prototype = {
 		return output;
 	}
 }
+

@@ -61,5 +61,15 @@ var ApplyEffects = {
 		var f = new PhotoFilter(img);
 		f.filterImage('grayscale');
 	},
+	fancy: function(img) {
+		// Slightly blurred, with heart bokeh layer
+		var f = new PhotoFilter(img);
+		f.filterImage('convolute', 
+			[ 1/9, 1/9, 1/9,
+			  1/9, 1/9, 1/9,
+			  1/9, 1/9, 1/9 ]
+	    );
+		f.applyLayer('bokeh-heart');
+	}
 
 };

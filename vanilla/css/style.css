@@ -212,7 +212,7 @@ h2.label {
     width: 200px;
     height: 200px;
     line-height: 200px;
-    background: rgba(0,0,0,0.75);
+    background: rgba(0,0,0,0.5);
     text-align: center;
     color: #fff;
     border-radius: 12px;
@@ -271,7 +271,7 @@ h2.label {
     white-space: nowrap;
     padding: 0 .5em;
 }
-#filterDrawer .photo-effects .filter {
+#filterDrawer .filter {
     display: inline-block;
     margin: 3px;
     border-radius: 8px;
@@ -282,27 +282,37 @@ h2.label {
     background: url("../images/effects-thumbs.png") no-repeat 0 0;
     background-size: cover;
 }
-#filterDrawer .filter#normal {
-    background-position: 0 -366px;    
+#filterDrawer .filter:hover {
+	box-shadow: 0 0 12px #f08;
 }
-#filterDrawer .filter#xpro {
-    background-position: 0 -732px;
+.filter#normal {
+    background-position: 0 0;    
 }
-#filterDrawer .filter#earlybird {
-    background-position: 0 0; 
+.filter#xpro {
+    background-position: -73px 0;
 }
-#filterDrawer .filter#lofi {
-    background-position: 0 -244px; 
+.filter#earlybird {
+    background-position: -146px 0; 
 }
-#filterDrawer .filter#sutro {
-    background-position: 0 -488px;
+.filter#lofi {
+    background-position: -219px 0; 
 }
-#filterDrawer .filter#toaster {
-    background-position: 0 -610px;
+.filter#sutro {
+    background-position: -292px 0;
 }
-#filterDrawer .filter#inkwell {
-    background-position: 0 -122px;
+.filter#nashville {
+    background-position: -365px 0;
 }
+.filter#toaster {
+    background-position: -438px 0;
+}
+.filter#inkwell {
+    background-position: -511px 0;
+}
+.filter#fancy {
+    background-position: -584px 0;
+}
+
 .filter-tag {
     color: #fff;
     font-size: .8em;

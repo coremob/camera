@@ -94,7 +94,7 @@ var App =  {
 		// Save a photo -- not done yet
 		document.getElementById('saveButton').addEventListener('click', function(){ 
 			var jpg = document.getElementsByTagName('canvas')[0].toDataURL('image/jpeg');
-			//App.displayJpegAndRemoveCanvas(jpg);
+			App.displayJpegAndRemoveCanvas(jpg);
 			window.open(jpg);
 		});
 	},
