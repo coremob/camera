@@ -25,7 +25,7 @@ PhotoFilter.prototype = {
 		var layerImg = new Image();
 		layerImg.onload = function() {
 			this.ctx.drawImage(layerImg, 0, 0);
-		}.bind(this)
+		}.bind(this);
 		layerImg.src = 'images/effects/' + layer + '.png';
 		this.render();
 	},

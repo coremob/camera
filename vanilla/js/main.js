@@ -4,51 +4,56 @@
 
 */
 
-var App =  {
+var CoreMobCamera = function() {
+	'use strict';
+
+	var maxFilesize = 1048576 * 3; // Max image size is 3MB
+	var loader = document.querySelector('.loader');
 	
-	init: function() {
+	return {
+		init: init
+	};
+	
+	function init() {
 		var prefetchImg = new Image();
 		prefetchImg.src = 'images/effects-thumbs.png';
-		
-		this.maxFilesize = 1048576 * 3; // 3MB
-		this.loader = document.querySelector('.loader');
-		
+
 		document.getElementById('userAgent').textContent = navigator.userAgent;
 		
-		this.displayWarning();
-		this.positionLoader();		
-		this.bindEvents();		
-		this.displayThumbnails();
-	},
+		displayWarning();
+		positionLoader();		
+		bindEvents();		
+		displayThumbnails();
+	}
 	
-	displayWarning: function() {
+	function displayWarning() {
 		var isSupported = (window.fileReader);
 		var error = document.querySelector('.errorMessage');
 		if(typeof window.FileReader === 'undefined') {
 			error.textContent = 'HTML Media Capture is not supported on your browser.';
 		}
 		// Feature detection fails! because IE10 "supports" FileReader, howewer the feature is disabled.
-	},
+	}
 	
-	positionLoader: function(){
+	function positionLoader() {
 		var posTop = window.innerHeight/2 - 100 + 'px', 
 			posLeft = window.innerWidth/2 - 100 + 'px';
 				
-		this.loader.style.top = posTop;
-		this.loader.style.left = posLeft;
-	},
+		loader.style.top = posTop;
+		loader.style.left = posLeft;
+	}
 	
-	bindEvents: function() {
+	function bindEvents() {
 		// Screen orientation/size change
 		var orientationEvent = ('onorientationchange' in window) ? 'orientationchange' : 'resize';
 		window.addEventListener(orientationEvent, function() {
-		    App.displayThumbnails();
+		    displayThumbnails();
 		}, false);
 
 		// A file is chosen
 		document.getElementById('camera').addEventListener('change', function() {
-			App.loader.hidden = false;
-			App.fileSelected('camera');
+			loader.hidden = false;
+			fileSelected('camera');
 		}, false);
 
 	
@@ -58,7 +63,7 @@ var App =  {
 		[].forEach.call(filterButton, function(el){
 			el.addEventListener('click', function(){
 				
-				App.loader.hidden = false; 
+				loader.hidden = false; 
 				// to do: display the loader as soon as the filter button is tapped.
 				// currently, it fails to show for some reasons...
 				
@@ -74,7 +79,7 @@ var App =  {
 				
 			    (function () {
 					if(document.getElementById('filteredPhoto')) {
-						App.loader.hidden = true;
+						loader.hidden = true;
 					} else {
 						console.log('canvas not loaded yet...');
 						setTimeout(arguments.callee, 500);
@@ -83,36 +88,35 @@ var App =  {
 				
 			}, false);
 		});
-
 	
 		// Uploading a photo -- not done yet
 		document.getElementById('uploadButton').addEventListener('click', function(){
-			this.loader.hidden = false;
-			App.startUpload();
+			loader.hidden = false;
+			startUpload();
 		}, false);
 				
 		// Save a photo -- not done yet
 		document.getElementById('saveButton').addEventListener('click', function(){ 
 			var jpg = document.getElementsByTagName('canvas')[0].toDataURL('image/jpeg');
-			App.displayJpegAndRemoveCanvas(jpg);
+			displayJpegAndRemoveCanvas(jpg);
 			window.open(jpg);
 		});
-	},
+	}
 	
-	displayThumbnails: function() {
+	function displayThumbnails() {
 		var eachWidth = document.querySelector('.thumb').offsetWidth + 5,
 			numThumb = (window.innerWidth / eachWidth) >>> 0;
 		document.getElementById('thumbnails').style.width = numThumb * eachWidth + 'px';
-	},
+	}
 	
-	displayJpegAndRemoveCanvas: function(jpg) {
+	function displayJpegAndRemoveCanvas(jpg) {
 		document.getElementById('resultPhoto').setAttribute('src', jpg);
 		var canvas = document.getElementsByTagName('canvas')[0];
 		canvas.parentNode.removeChild(canvas);
 		document.getElementById('resultPhoto').hidden = false;
-	},
-
-	cropAndResize: function() {
+	}
+		
+	function cropAndResize() {
 		var photoObj = document.getElementById('userPhoto');
 		var finalWidth = 612,
 			finalHeight = 612;
@@ -120,8 +124,7 @@ var App =  {
 	    var imgCrop = new PhotoCrop(photoObj, {
 			size: {w: finalWidth, h: finalHeight}
 	    });
-	    
-		
+	    		
 		// Show the UI
 		document.getElementById('main').hidden = true;
 		document.getElementById('photoCrop').hidden = false;
@@ -130,8 +133,6 @@ var App =  {
 			var newImg = imgCrop.getDataURL();
 			var imgEl = document.getElementById('resultPhoto');
 			imgEl.setAttribute('src', newImg);
-			//imgEl.setAttribute('width', finalWidth);
-			//imgEl.setAttribute('height', finalHeight);
 			document.getElementById('photoCrop').hidden = true;
 			document.getElementById('photoFrame').hidden = false;
 			document.getElementById('filterDrawer').hidden = false;
@@ -142,30 +143,29 @@ var App =  {
 			document.getElementById('main').hidden = false;
 			document.getElementById('photoCrop').hidden = true;
 		}, false);
-	},
-
-
+	}
+	
 	/**
 	 * File Picker
 	 */
 
-	fileSelected: function(capture) {
-		this.clearDataDisplay();
+	function fileSelected(capture) {
+		clearDataDisplay();
 		
 	    var localFile = document.getElementById(capture).files[0],
-	    	error = document.querySelector('.errorMessage');
+	    	error = document.querySelector('.errorMessage'),
 	    	imgFmt = /^(image\/bmp|image\/gif|image\/jpeg|image\/png)$/i;
 	    	
 	    if (! imgFmt.test(localFile.type)) {
 	        error.textContent = 'The image format, ' + localFile.type + ' is not supported.';
 			error.hidden = false;
-			App.loader.hidden = true;
+			loader.hidden = true;
 	        return;
 	    }
-	    if (localFile.size > this.maxFilesize) {
+	    if (localFile.size > maxFilesize) {
 	        error.textContent = 'The file size is too large.';
 			error.hidden = false;
-			App.loader.hidden = true;
+			loader.hidden = true;
 	        return;
 	    }
 		// display the selected image
@@ -177,75 +177,72 @@ var App =  {
 			orig.setAttribute('src', e.target.result);
 			orig.hidden = true;
 	        orig.onload = function () {
-	        	App.cropAndResize();	        
-				App.displayFileInfo(localFile, orig);
-				App.loader.hidden = true;
+	        	cropAndResize();	        
+				displayFileInfo(localFile, orig);
+				loader.hidden = true;
 	        };
 	    };
 		
 	    // read selected file as DataURL
 	    imgFile.readAsDataURL(localFile);
 
-	},	
+	}
 	
-	displayFileInfo: function(file, img) {
-        //App.resultFileSize = App.bytesToSize(file.size);
+	function displayFileInfo(file, img) {
+        //resultFileSize = bytesToSize(file.size);
         document.getElementById('fileinfo').hidden = false;
         document.getElementById('filename').textContent = 'File name: ' + file.name;
         document.getElementById('filedim').textContent = 'Original dimension was: ' + img.naturalWidth + ' x ' + img.naturalHeight;
-	},
-
+	}
+	
+	function clearDataDisplay() {
+		document.querySelector('.errorMessage').hidden = false;
+	}
+	
 	/**
 	 * XHR2 File Upload to server
 	 */
 	 
-	startUpload: function() {
-		this.clearDataDisplay();
+	function startUpload() {
+		clearDataDisplay();
 
 		// Get form data
 		var formData = new FormData(document.getElementById('uploadForm')); 
 	
 		var xhr = new XMLHttpRequest();        
-	    xhr.upload.addEventListener('progress', App.uploadProgress, false);
-	    xhr.addEventListener('load', App.uploadFinish, false);
-	    xhr.addEventListener('error', App.uploadError, false);
-	    xhr.addEventListener('abort', App.uploadAbort, false);
+	    xhr.upload.addEventListener('progress', uploadProgress, false);
+	    xhr.addEventListener('load', uploadFinish, false);
+	    xhr.addEventListener('error', uploadError, false);
+	    xhr.addEventListener('abort', uploadAbort, false);
 	    xhr.open('POST', '/upload');
 	    xhr.send(formData);
-	},
+	}
 
-	uploadProgress: function(e) { 
+	function uploadProgress(e) { 
 		if (e.lengthComputable) {
 		
 		} else {
 			document.getElementById('progressPercent').textContent = 'Unable to calculate';
 		}
-	},
+	}
 
-	uploadFinish: function(e) { console.log('uploaded');
-		
-		App.loader.hidden = true;
-		
-	},
+	function uploadFinish(e) {		
+		loader.hidden = true;		
+	}
 
-	uploadError: function(e) {
+	function uploadError(e) {
 		document.querySelector('.errorMessage').textContent = 'An error occurred while uploading the file';
 		document.querySelector('.errorMessage').hidden = false;
-	},
+	}
 	
-	uploadAbort: function(e) {
+	function uploadAbort(e) {
 		document.querySelector('.errorMessage').textContent = 'The upload has been canceled by the user or the connection has been dropped.';
 		document.querySelector('.errorMessage').hidden = false;
-	},
-	
+	}
+}();
 
-	clearDataDisplay: function() {
-		document.querySelector('.errorMessage').hidden = false;
-	},
-
-};
-
+ 
 
 onload = function() {
-	App.init();
+	CoreMobCamera.init();
 }
