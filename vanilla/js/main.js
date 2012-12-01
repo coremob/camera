@@ -4,11 +4,19 @@
 
 */
 
-var CoreMobCamera = function() {
+var CoreMobCamera = (function() {
 	'use strict';
 
-	var maxFilesize = 1048576 * 3; // Max image size is 3MB
-	var loader = document.querySelector('.loader');
+	var maxFilesize = 1048576 * 3; // Max image size is 3MB (iPhone5, Galaxy SIII, Lumia920 < 3MB)
+	
+	// UI
+	var loader = document.querySelector('.loader'),
+		error = document.querySelector('.errorMessage'),
+		sectionMain = document.getElementById('main'),
+		sectionPhotoCrop = document.getElementById('photoCrop'),
+		sectionPhotoEffect = document.getElementById('photoEffect'),
+		sectionFilterDrawer = document.getElementById('filterDrawer'),
+		resultPhoto = document.getElementById('resultPhoto');
 	
 	return {
 		init: init
@@ -28,7 +36,6 @@ var CoreMobCamera = function() {
 	
 	function displayWarning() {
 		var isSupported = (window.fileReader);
-		var error = document.querySelector('.errorMessage');
 		if(typeof window.FileReader === 'undefined') {
 			error.textContent = 'HTML Media Capture is not supported on your browser.';
 		}
@@ -63,16 +70,13 @@ var CoreMobCamera = function() {
 		[].forEach.call(filterButton, function(el){
 			el.addEventListener('click', function(){
 				
-				loader.hidden = false; 
-				// to do: display the loader as soon as the filter button is tapped.
-				// currently, it fails to show for some reasons...
+				loader.hidden = false;
 				
 				// Removing the previously created canvas
 				var prevEffect = document.getElementById('filteredPhoto');
 				if(prevEffect) {	
 					prevEffect.parentNode.removeChild(prevEffect);
 				}
-				var resultPhoto = document.getElementById('resultPhoto');
 				resultPhoto.hidden = false;
 				
 				ApplyEffects[this.id](resultPhoto);
@@ -110,10 +114,10 @@ var CoreMobCamera = function() {
 	}
 	
 	function displayJpegAndRemoveCanvas(jpg) {
-		document.getElementById('resultPhoto').setAttribute('src', jpg);
+		resultPhoto.setAttribute('src', jpg);
 		var canvas = document.getElementsByTagName('canvas')[0];
 		canvas.parentNode.removeChild(canvas);
-		document.getElementById('resultPhoto').hidden = false;
+		resultPhoto.hidden = false;
 	}
 		
 	function cropAndResize() {
@@ -126,22 +130,22 @@ var CoreMobCamera = function() {
 	    });
 	    		
 		// Show the UI
-		document.getElementById('main').hidden = true;
-		document.getElementById('photoCrop').hidden = false;
+		sectionMain.hidden = true;
+		sectionPhotoCrop.hidden = false;
+		document.getElementById('textDimension').textContent = finalWidth + ' x ' + finalHeight;
 		
 		document.getElementById('cropApply').addEventListener('click', function(){
 			var newImg = imgCrop.getDataURL();
-			var imgEl = document.getElementById('resultPhoto');
-			imgEl.setAttribute('src', newImg);
-			document.getElementById('photoCrop').hidden = true;
-			document.getElementById('photoFrame').hidden = false;
-			document.getElementById('filterDrawer').hidden = false;
+			resultPhoto.setAttribute('src', newImg);
+			sectionPhotoCrop.hidden = true;
+			sectionPhotoEffect.hidden = false;
+			sectionFilterDrawer.hidden = false;
 		}, false);
 		
 		document.getElementById('cropCancel').addEventListener('click', function(){
 			imgCrop.cancel();
-			document.getElementById('main').hidden = false;
-			document.getElementById('photoCrop').hidden = true;
+			sectionMain.hidden = false;
+			sectionPhotoCrop.hidden = true;
 		}, false);
 	}
 	
@@ -153,7 +157,6 @@ var CoreMobCamera = function() {
 		clearDataDisplay();
 		
 	    var localFile = document.getElementById(capture).files[0],
-	    	error = document.querySelector('.errorMessage'),
 	    	imgFmt = /^(image\/bmp|image\/gif|image\/jpeg|image\/png)$/i;
 	    	
 	    if (! imgFmt.test(localFile.type)) {
@@ -196,7 +199,7 @@ var CoreMobCamera = function() {
 	}
 	
 	function clearDataDisplay() {
-		document.querySelector('.errorMessage').hidden = false;
+		error.hidden = false;
 	}
 	
 	/**
@@ -231,15 +234,15 @@ var CoreMobCamera = function() {
 	}
 
 	function uploadError(e) {
-		document.querySelector('.errorMessage').textContent = 'An error occurred while uploading the file';
-		document.querySelector('.errorMessage').hidden = false;
+		error.textContent = 'An error occurred while uploading the file';
+		error.hidden = false;
 	}
 	
 	function uploadAbort(e) {
-		document.querySelector('.errorMessage').textContent = 'The upload has been canceled by the user or the connection has been dropped.';
-		document.querySelector('.errorMessage').hidden = false;
+		error.textContent = 'The upload has been canceled by the user or the connection has been dropped.';
+		error.hidden = false;
 	}
-}();
+}());
 
  
 
