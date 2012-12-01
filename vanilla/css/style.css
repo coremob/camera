@@ -24,7 +24,6 @@ img {
     -o-box-sizing: border-box;
     box-sizing: border-box;
 }
-
 body {
     font: 1.2em/1.3em 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Roboto-Light', 'Roboto Light', 'Roboto', 'Segoe UI Web Light', 'Segoe UI Light', 'Segoe UI Web Regular', 'Segoe UI', Helvetica, Arial, sans-serif;
     background: #453c34;
@@ -32,14 +31,12 @@ body {
     margin: 0;
     padding: 0;
 }
-
 header {
     box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     background: rgba(255,255,255,0.1);
     margin-bottom: 1.2em;
     text-align: center;
 }
-
 header h1 {
     font-size: 1.75em;
     line-height: 50px;
@@ -50,7 +47,6 @@ header h1 {
     margin: 0;
     padding: 0 1em;
 }
-
 nav {
 	position: fixed;
     bottom: 0;
@@ -63,13 +59,11 @@ nav {
     background: -o-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
     background: linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
 }
-
 footer {
     padding: 3em 1em 1em;
     font-size: 0.75em;
     text-align: right;
 }
-
 section[hidden], div[hidden] {
 	display: none;
 }
@@ -92,7 +86,6 @@ section[hidden], div[hidden] {
 }
 #main nav li {
 	list-style: none;
-	margin-left: -4px;
 	display: table-cell;
 	text-align: center;
 	line-height: 40px;
@@ -127,6 +120,7 @@ li.camera {
 }
 
 /* Form Elements */
+
 label {
     font-size: 1.2em;
     padding-bottom: .5em;
@@ -145,32 +139,21 @@ input[type="button"] {
     padding: 8px 24px;
     margin-right: 10px;
     border-radius: 6px;
-    text-shadow: 0 1px 1px rgba(255,255,255,0.75);
-    vertical-align: middle;
-    
+    vertical-align: middle;    
     color: #fff;
     text-shadow: 1px 0 0 #333;
     border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
     background-color: #ff349a;
 }
-
 button:disabled,
 input:disabled {
 	opacity: .5;
 }
-
 button:enabled:active,
 input[type="button"]:enabled:active {
     box-shadow: inset 0 4px 4px rgba(0,0,0,0.25);
     outline: 0;
 }
-
-input[type="button"].save-button,
-input[type="button"].upload-button {
-    display: inline-block;
-    margin: 0.5em;
-}
-
 button.dismiss,
 input[type="button"].dismiss {
     color: #fff;
@@ -179,8 +162,14 @@ input[type="button"].dismiss {
     background-color: #faa;
 }
 
+.save-button,
+.upload-button {
+    display: inline-block;
+    margin: 0.5em;
+}
 
 /* Photo */
+
 #photoResultContainer {
     overflow: hidden;
     width: 100%;
@@ -207,7 +196,6 @@ h2.label {
 	text-align: center;
 	margin: 1em auto;
 }
-
 .loader {
     width: 200px;
     height: 200px;
@@ -221,10 +209,6 @@ h2.label {
 .errorMessage {
     color: #f00;
     margin: 0 1em 1em;
-}
-#filtrr2-resultPhoto {
-    width: 100% !important;
-    height: auto !important;
 }
 .evroneCropCanvas {
     cursor: move;
@@ -263,7 +247,7 @@ h2.label {
     text-align: center;
 }
 
-#filterDrawer #filterButtons {
+#filterButtons {
     text-align: center;
     width: 100%;
     overflow-x: auto;
@@ -271,7 +255,7 @@ h2.label {
     white-space: nowrap;
     padding: 0 .5em;
 }
-#filterDrawer .filter {
+.filter {
     display: inline-block;
     margin: 3px;
     border-radius: 8px;
@@ -282,34 +266,34 @@ h2.label {
     background: url("../images/effects-thumbs.png") no-repeat 0 0;
     background-size: cover;
 }
-#filterDrawer .filter:hover {
+.filter:hover {
 	box-shadow: 0 0 12px #f08;
 }
-.filter#normal {
+.filter:first-of-type {
     background-position: 0 0;    
 }
-.filter#xpro {
+.filter:nth-of-type(2) {
     background-position: -73px 0;
 }
-.filter#earlybird {
+.filter:nth-of-type(3) {
     background-position: -146px 0; 
 }
-.filter#lofi {
+.filter:nth-of-type(4) {
     background-position: -219px 0; 
 }
-.filter#sutro {
+.filter:nth-of-type(5) {
     background-position: -292px 0;
 }
-.filter#nashville {
+.filter:nth-of-type(6) {
     background-position: -365px 0;
 }
-.filter#toaster {
+.filter:nth-of-type(7) {
     background-position: -438px 0;
 }
-.filter#inkwell {
+.filter:nth-of-type(8) {
     background-position: -511px 0;
 }
-.filter#fancy {
+.filter:nth-of-type(9) {
     background-position: -584px 0;
 }
 

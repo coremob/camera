@@ -33,12 +33,12 @@ var CoreMobCamera = (function() {
 		displayThumbnails();
 	}
 	
+	// Note: IE10 and Maxthon return the window.FileReader as 'function' but fail to read image
+	// I need to write another capability check besides this function
 	function displayWarning() {
-		var isSupported = (window.fileReader);
 		if(typeof window.FileReader === 'undefined') {
 			error.textContent = 'HTML Media Capture is not supported on your browser.';
 		}
-		//need capability check
 	}
 	
 	function positionLoader() {
@@ -56,13 +56,13 @@ var CoreMobCamera = (function() {
 		    displayThumbnails();
 		}, false);
 
+		
 		// A file is chosen
 		document.getElementById('camera').addEventListener('change', function() {
 			loader.hidden = false;
 			fileSelected('camera');
 		}, false);
-
-	
+		
 		// Filter Effects selected
 		var filterList = document.getElementById('filterButtons');
 		

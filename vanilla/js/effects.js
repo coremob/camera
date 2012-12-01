@@ -3,42 +3,38 @@ var ApplyEffects = {
 		var f = new PhotoFilter(img);
 		f.reset();
 	},
-	xpro: function(img) {
+	fluorescent: function(img) {
 		// Warm, saturated tones with an emphasis on yellow
 		var f = new PhotoFilter(img);
-		f.filterImage('rgbAdjust', [1, 1.1, 1.3]);
-		f.filterImage('convolute', 
-			[ 0, 0, 0,
-	    	  0, 1.2, 0,
-	    	  0, 0, 0 ]
-	    );
+		f.filterImage('rgbAdjust', [1, 1.2, 1.4]);
+		f.filterImage('brightness', 10);
 	},
-	earlybird: function(img) {
-		// Faded, blurred, with an emphasis on yellow and beige
+	nostalgia: function(img) {
+		// Slightly blurred, with sepia tone
 		var f = new PhotoFilter(img);
-		f.filterImage('rgbAdjust', [1.15, 1, 1.1]);
+		f.filterImage('rgbAdjust', [1.4, 1.2, 1]);
 		f.filterImage('convolute', 
-			[ 1/9, 1/9, 1/9,
-			  1/9, 1/9, 1/9,
-			  1/9, 1/9, 1/9 ]
+			[ 0.1, 0.1, 0.1,
+			  0.1, 0.1, 0.1,
+			  0.1, 0.1, 0.1 ]
 	    );
 	},
-	lofi: function(img) {
+	phykos: function(img) {
 		// Slightly blurred, with yellow and green saturated
 		var f = new PhotoFilter(img);
-		f.filterImage('rgbAdjust', [1, 1.05, 0.95]);
+		f.filterImage('rgbAdjust', [1, 1.1, 1.1]);
 		f.filterImage('convolute', 
-			[ 1/9, 1/9, 1/9,
-			  1/9, 1/9, 1/9,
-			  1/9, 1/9, 1/9 ]
+			[ 0.1, 0.1, 0.1,
+			  0.1, 0.1, 0.1,
+			  0.1, 0.1, 0.1 ]
 	    );
 	},
-	sutro: function(img) {
+	lotus: function(img) {
 		// Sepia-like, with an emphasis on purples and browns
 		var f = new PhotoFilter(img);
-		f.filterImage('rgbAdjust', [1.45, 1.15, 1.25]);
+		f.filterImage('rgbAdjust', [1.4, 1.15, 1.1]);
 	},
-	nashville: function(img) {
+	memphis: function(img) {
 		// Sharp images with a magenta-meets-purple tint
 		var f = new PhotoFilter(img);
 		f.filterImage('rgbAdjust', [1.2, 1, 1.1]);
@@ -48,7 +44,7 @@ var ApplyEffects = {
 	    	  0, -1,  0 ]
 	    );
 	},
-	toaster: function(img) {
+	deutlich: function(img) {
 		// High exposure
 		var f = new PhotoFilter(img);
 		f.filterImage('convolute', 
@@ -57,11 +53,11 @@ var ApplyEffects = {
 	    	  0, 0, 0 ]
 	    );
 	},
-	inkwell: function(img) {
+	sumie: function(img) {
 		var f = new PhotoFilter(img);
 		f.filterImage('grayscale');
 	},
-	fancy: function(img) {
+	dream: function(img) {
 		// Slightly blurred, with heart bokeh layer
 		var f = new PhotoFilter(img);
 		f.filterImage('convolute', 
