@@ -263,7 +263,7 @@ h2.label {
     text-align: center;
 }
 
-#filterDrawer .photo-effects {
+#filterDrawer #filterButtons {
     text-align: center;
     width: 100%;
     overflow-x: auto;

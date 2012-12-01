@@ -5,7 +5,6 @@
 */
 
 var CoreMobCamera = (function() {
-	'use strict';
 
 	var maxFilesize = 1048576 * 3; // Max image size is 3MB (iPhone5, Galaxy SIII, Lumia920 < 3MB)
 	
@@ -39,7 +38,7 @@ var CoreMobCamera = (function() {
 		if(typeof window.FileReader === 'undefined') {
 			error.textContent = 'HTML Media Capture is not supported on your browser.';
 		}
-		// Feature detection fails! because IE10 "supports" FileReader, howewer the feature is disabled.
+		//need capability check
 	}
 	
 	function positionLoader() {
@@ -65,34 +64,47 @@ var CoreMobCamera = (function() {
 
 	
 		// Filter Effects selected
-		var filterButton  = document.querySelectorAll('#filterDrawer .filter');
+		var filterList = document.getElementById('filterButtons');
 		
-		[].forEach.call(filterButton, function(el){
-			el.addEventListener('click', function(){
+		filterList.addEventListener('click', function(e){
+			
+			var filterButton = getFilterButton(e.target);
+			if(!filterButton) return;
+			
+			loader.hidden = false;
+
+			setTimeout(function(){
+				ApplyEffects[filterButton.id](resultPhoto);
+			}, 1)
 				
-				loader.hidden = false;
-				
-				// Removing the previously created canvas
-				var prevEffect = document.getElementById('filteredPhoto');
-				if(prevEffect) {	
-					prevEffect.parentNode.removeChild(prevEffect);
+			// Removing the previously created canvas
+			var prevEffect = document.getElementById('filteredPhoto');
+			if(prevEffect) {	
+				prevEffect.parentNode.removeChild(prevEffect);
+			}
+			resultPhoto.hidden = false;		
+			
+		    (function () {
+				if(document.getElementById('filteredPhoto')) {
+					loader.hidden = true;
+				} else {
+					console.log('canvas not loaded yet...');
+					setTimeout(arguments.callee, 500);
 				}
-				resultPhoto.hidden = false;
+			})();
 				
-				ApplyEffects[this.id](resultPhoto);
-				
-			    (function () {
-					if(document.getElementById('filteredPhoto')) {
-						loader.hidden = true;
-					} else {
-						console.log('canvas not loaded yet...');
-						setTimeout(arguments.callee, 500);
-					}
-				})();
-				
-			}, false);
-		});
+		}, false);
 	
+		function getFilterButton(target) {
+			var button;
+			if(target.classList.contains('filter')) {
+				button = target;
+			} else if (target.parentNode.classList.contains('filter')) {
+				button = target.parentNode;
+			}
+			return button;
+		}
+		
 		// Uploading a photo -- not done yet
 		document.getElementById('uploadButton').addEventListener('click', function(){
 			loader.hidden = false;
