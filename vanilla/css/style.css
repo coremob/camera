@@ -5,8 +5,10 @@ html {
     -ms-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
 }
+body, 
 form {
     margin: 0;
+    font: 1.2em/1.3em 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Roboto-Light', 'Roboto Light', 'Roboto', 'Segoe UI Web Light', 'Segoe UI Light', 'Segoe UI Web Regular', 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 html,
 body {
@@ -24,11 +26,9 @@ img {
     -o-box-sizing: border-box;
     box-sizing: border-box;
 }
-body {
-    font: 1.2em/1.3em 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Roboto-Light', 'Roboto Light', 'Roboto', 'Segoe UI Web Light', 'Segoe UI Light', 'Segoe UI Web Regular', 'Segoe UI', Helvetica, Arial, sans-serif;
+body {   
     background: #453c34;
     color: #cacaca;
-    margin: 0;
     padding: 0;
 }
 header {
@@ -42,7 +42,6 @@ header h1 {
     line-height: 50px;
     color: #f08;
     text-shadow: 1px 2px 2px rgba(0,0,0,0.5);
-    font-family: Niconne;
     font-weight: 300;
     margin: 0;
     padding: 0 1em;
@@ -53,8 +52,8 @@ nav {
     width: 100%;
     text-align: center;
     
-    background: -webkit-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.53) 100%);
-    background: -moz-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 10%,rgba(0,0,0,0) 100%);
+    background: -webkit-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
+    background: -moz-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
     background: -ms-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
     background: -o-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
     background: linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
@@ -112,7 +111,7 @@ li.camera {
     position: relative;
     top: -25px;
 }
-#main nav li.camera:hover { /* active doesn't work on android/chrome */
+#main nav li.camera:hover { /* :active doesn't work on android/chrome */
 	background: #0ab;
 }
 #filePickerContainer {
