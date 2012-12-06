@@ -45,13 +45,13 @@ PhotoFilter.prototype = {
 	    	this.ctx.putImageData(this.pixelData, 0, 0);
     	}
         this.imgObj.parentNode.appendChild(this.c);
-        this.imgObj.hidden = true;
+        this.imgObj.setAttribute('hidden', 'hidden');
     },
     
     reset: function() {
     	this.ctx.drawImage(this.imgObj, 0, 0);
     	this.imgObj.parentNode.appendChild(this.c);
-        this.imgObj.hidden = true; 
+        this.imgObj.setAttribute('hidden', 'hidden'); 
     },
     
     /* ImageData.data object (CanvasPixelArray is now legacy)

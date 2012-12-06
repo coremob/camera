@@ -26,7 +26,7 @@ var CoreMobCamera = (function() {
 		prefetchImg.src = 'images/effects-thumbs.png';
 
 		document.getElementById('userAgent').textContent = navigator.userAgent;
-		
+
 		displayWarning();
 		positionLoader();		
 		bindEvents();		
@@ -59,7 +59,7 @@ var CoreMobCamera = (function() {
 		
 		// A file is chosen
 		document.getElementById('camera').addEventListener('change', function() {
-			loader.hidden = false;
+			loader.removeAttribute('hidden');
 			fileSelected('camera');
 		}, false);
 		
@@ -71,7 +71,7 @@ var CoreMobCamera = (function() {
 			var filterButton = getFilterButton(e.target);
 			if(!filterButton) return;
 			
-			loader.hidden = false;
+			loader.removeAttribute('hidden');
 
 			setTimeout(function(){
 				ApplyEffects[filterButton.id](resultPhoto);
@@ -82,11 +82,11 @@ var CoreMobCamera = (function() {
 			if(prevEffect) {	
 				prevEffect.parentNode.removeChild(prevEffect);
 			}
-			resultPhoto.hidden = false;		
+			resultPhoto.removeAttribute('hidden');		
 			
 		    (function () {
 				if(document.getElementById('filteredPhoto')) {
-					loader.hidden = true;
+					loader.setAttribute('hidden', 'hidden');
 				} else {
 					console.log('canvas not loaded yet...');
 					setTimeout(arguments.callee, 500);
@@ -107,7 +107,7 @@ var CoreMobCamera = (function() {
 		
 		// Uploading a photo -- not done yet
 		document.getElementById('uploadButton').addEventListener('click', function(){
-			loader.hidden = false;
+			loader.removeAttribute('hidden');
 			startUpload();
 		}, false);
 				
@@ -129,7 +129,7 @@ var CoreMobCamera = (function() {
 		resultPhoto.setAttribute('src', jpg);
 		var canvas = document.getElementsByTagName('canvas')[0];
 		canvas.parentNode.removeChild(canvas);
-		resultPhoto.hidden = false;
+		resultPhoto.removeAttribute('hidden');
 	}
 		
 	function cropAndResize() {
@@ -142,22 +142,22 @@ var CoreMobCamera = (function() {
 	    });
 	    		
 		// Show the UI
-		sectionMain.hidden = true;
-		sectionPhotoCrop.hidden = false;
+		sectionMain.setAttribute('hidden', 'hidden');
+		sectionPhotoCrop.removeAttribute('hidden');
 		document.getElementById('textDimension').textContent = finalWidth + ' x ' + finalHeight;
 		
 		document.getElementById('cropApply').addEventListener('click', function(){
 			var newImg = imgCrop.getDataURL();
 			resultPhoto.setAttribute('src', newImg);
-			sectionPhotoCrop.hidden = true;
-			sectionPhotoEffect.hidden = false;
-			sectionFilterDrawer.hidden = false;
+			sectionPhotoCrop.setAttribute('hidden', 'hidden');
+			sectionPhotoEffect.removeAttribute('hidden');
+			sectionFilterDrawer.removeAttribute('hidden');
 		}, false);
 		
 		document.getElementById('cropCancel').addEventListener('click', function(){
 			imgCrop.cancel();
-			sectionMain.hidden = false;
-			sectionPhotoCrop.hidden = true;
+			sectionMain.removeAttribute('hidden');
+			sectionPhotoCrop.setAttribute('hidden', 'hidden');
 		}, false);
 	}
 	
@@ -173,14 +173,14 @@ var CoreMobCamera = (function() {
 	    	
 	    if (! imgFmt.test(localFile.type)) {
 	        error.textContent = 'The image format, ' + localFile.type + ' is not supported.';
-			error.hidden = false;
-			loader.hidden = true;
+			error.removeAttribute('hidden');
+			loader.setAttribute('hidden', 'hidden');
 	        return;
 	    }
 	    if (localFile.size > maxFilesize) {
 	        error.textContent = 'The file size is too large.';
-			error.hidden = false;
-			loader.hidden = true;
+			error.removeAttribute('hidden');
+			loader.setAttribute('hidden', 'hidden');
 	        return;
 	    }
 		// display the selected image
@@ -189,12 +189,12 @@ var CoreMobCamera = (function() {
 	    
 		imgFile.onload = function(e){
 	        // e.target.result contains the Base64 DataURL
-			orig.setAttribute('src', e.target.result);
-			orig.hidden = true;
+			orig.src = e.target.result;
+			orig.setAttribute('hidden', 'hidden');
 	        orig.onload = function () {
 	        	cropAndResize();	        
 				displayFileInfo(localFile, orig);
-				loader.hidden = true;
+				loader.setAttribute('hidden', 'hidden');
 	        };
 	    };
 		
@@ -205,13 +205,13 @@ var CoreMobCamera = (function() {
 	
 	function displayFileInfo(file, img) {
         //resultFileSize = bytesToSize(file.size);
-        document.getElementById('fileinfo').hidden = false;
+        document.getElementById('fileinfo').removeAttribute('hidden');
         document.getElementById('filename').textContent = 'File name: ' + file.name;
         document.getElementById('filedim').textContent = 'Original dimension was: ' + img.naturalWidth + ' x ' + img.naturalHeight;
 	}
 	
 	function clearDataDisplay() {
-		error.hidden = false;
+		error.removeAttribute('hidden');
 	}
 	
 	/**
@@ -242,17 +242,17 @@ var CoreMobCamera = (function() {
 	}
 
 	function uploadFinish(e) {		
-		loader.hidden = true;		
+		loader.setAttribute('hidden', 'hidden');		
 	}
 
 	function uploadError(e) {
 		error.textContent = 'An error occurred while uploading the file';
-		error.hidden = false;
+		error.removeAttribute('hidden');
 	}
 	
 	function uploadAbort(e) {
 		error.textContent = 'The upload has been canceled by the user or the connection has been dropped.';
-		error.hidden = false;
+		error.removeAttribute('hidden');
 	}
 }());
 

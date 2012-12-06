@@ -5,14 +5,14 @@ html {
     -ms-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
 }
+html,
+body {
+	height: 100%;
+}
 body, 
 form {
     margin: 0;
     font: 1.2em/1.3em 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Roboto-Light', 'Roboto Light', 'Roboto', 'Segoe UI Web Light', 'Segoe UI Light', 'Segoe UI Web Regular', 'Segoe UI', Helvetica, Arial, sans-serif;
-}
-html,
-body {
-	height: 100%;
 }
 img {
 	border: 0;
@@ -63,7 +63,7 @@ footer {
     font-size: 0.75em;
     text-align: right;
 }
-section[hidden], div[hidden] {
+*[hidden] { /* required for the browsers lacking the 'hidden' attribute support. IE10 */
 	display: none;
 }
 
@@ -176,7 +176,7 @@ input[type="button"].dismiss {
 }
 #resultPhoto, #croppedPhoto, #filteredPhoto {
     width: 100%;
-    height: auto;
+    height: auto; /* IE10 does not like this! */
 }
 h2.label {
     color: #333;

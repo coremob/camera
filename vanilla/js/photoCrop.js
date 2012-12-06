@@ -13,8 +13,7 @@ var PhotoCrop = function(imgObj, options) {
 
 PhotoCrop.prototype = {
     init: function() {
-        console.log(this.settings); 
-        
+        //console.log(this.settings); 
         this.canvas = document.createElement('canvas');
         this.canvas.id = 'croppedPhoto';
         this.canvas.width = this.settings.size.w;
@@ -25,20 +24,19 @@ PhotoCrop.prototype = {
     
     crop: function(){
     	// determin the size of the 1:1 square
-    	var origWidth = this.imgObj.width,
-    		origHeight = this.imgObj.height;
-    		console.log(this.imgObj.width);
+    	var origWidth = (this.imgObj.naturalWidth) ? this.imgObj.naturalWidth : imgObj.width,
+    		origHeight = (this.imgObj.naturalHeight) ? this.imgObj.naturalHeight : this.imgObj.height;
     	var sw, sh, sx, sy;
     		
     	sw = sh = Math.min(origWidth, origHeight);
-    	sx = (sw == origWidth) ? 0 : Math.floor((origWidth - sw)/2);
-    	sy = (sy == origWidth) ? 0 : Math.floor((origHeight - sh)/2);
+    	sx = (sw == origWidth) ? 0 : ((origWidth - sw)/2) >>> 0;
+    	sy = (sy == origWidth) ? 0 : ((origHeight - sh)/2) >>> 0;
     	
     	var dw = this.settings.size.w,
         	dh = this.settings.size.h,
         	dx = 0,
         	dy = 0;
-        	console.log(sx, sy, sw, sh, dx, dy, dw, dh);
+        	//console.log(sx, sy, sw, sh, dx, dy, dw, dh);
         	
         var context = this.canvas.getContext('2d'); 
 	    context.drawImage(this.imgObj, sx, sy, sw, sh, dx, dy, dw, dh);
