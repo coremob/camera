@@ -204,6 +204,11 @@ h2.label {
     color: #fff;
     border-radius: 12px;
     position: fixed;
+    left: 50%;
+    margin-left: -100px;
+    top: 50%;
+    margin-top: -100px;
+    
 }
 .errorMessage {
     color: #f00;

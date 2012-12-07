@@ -27,8 +27,7 @@ var CoreMobCamera = (function() {
 
 		document.getElementById('userAgent').textContent = navigator.userAgent;
 
-		displayWarning();
-		positionLoader();		
+		displayWarning();		
 		bindEvents();		
 		displayThumbnails();
 	}
@@ -39,14 +38,6 @@ var CoreMobCamera = (function() {
 		if(typeof window.FileReader === 'undefined') {
 			error.textContent = 'HTML Media Capture is not supported on your browser.';
 		}
-	}
-	
-	function positionLoader() {
-		var posTop = window.innerHeight/2 - 100 + 'px', 
-			posLeft = window.innerWidth/2 - 100 + 'px';
-				
-		loader.style.top = posTop;
-		loader.style.left = posLeft;
 	}
 	
 	function bindEvents() {
@@ -140,8 +131,10 @@ var CoreMobCamera = (function() {
 	    var imgCrop = new PhotoCrop(photoObj, {
 			size: {w: finalWidth, h: finalHeight}
 	    });
+	    
+	    imgCrop.displayResult();
 	    		
-		// Show the UI
+		// Toggle the UI
 		sectionMain.setAttribute('hidden', 'hidden');
 		sectionPhotoCrop.removeAttribute('hidden');
 		document.getElementById('textDimension').textContent = finalWidth + ' x ' + finalHeight;
@@ -155,7 +148,7 @@ var CoreMobCamera = (function() {
 		}, false);
 		
 		document.getElementById('cropCancel').addEventListener('click', function(){
-			imgCrop.cancel();
+			imgCrop.removeResult();
 			sectionMain.removeAttribute('hidden');
 			sectionPhotoCrop.setAttribute('hidden', 'hidden');
 		}, false);
@@ -204,7 +197,6 @@ var CoreMobCamera = (function() {
 	}
 	
 	function displayFileInfo(file, img) {
-        //resultFileSize = bytesToSize(file.size);
         document.getElementById('fileinfo').removeAttribute('hidden');
         document.getElementById('filename').textContent = 'File name: ' + file.name;
         document.getElementById('filedim').textContent = 'Original dimension was: ' + img.naturalWidth + ' x ' + img.naturalHeight;

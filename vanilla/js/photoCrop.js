@@ -40,7 +40,6 @@ PhotoCrop.prototype = {
         	
         var context = this.canvas.getContext('2d'); 
 	    context.drawImage(this.imgObj, sx, sy, sw, sh, dx, dy, dw, dh);
-	    this.imgObj.parentNode.appendChild(this.canvas);
     },
     
     extend: function(obj, extObj) {
@@ -54,7 +53,11 @@ PhotoCrop.prototype = {
 	    return this.canvas.toDataURL('image/'+this.settings.format);
     },
     
-    cancel: function() {
+    displayResult: function() {
+	    this.imgObj.parentNode.appendChild(this.canvas);
+    },
+    
+    removeResult: function() {console.log('canvas removed');
 	    this.canvas.parentNode.removeChild(this.canvas);
     }
 }
