@@ -5,7 +5,7 @@
 */
 
 var CoreMobCamera = (function() {
-
+	
 	var maxFilesize = 1048576 * 3; // Max image size is 3MB (iPhone5, Galaxy SIII, Lumia920 < 3MB)
 	
 	// UI
@@ -29,7 +29,7 @@ var CoreMobCamera = (function() {
 
 		displayWarning();		
 		bindEvents();		
-		displayThumbnails();
+		createGallery();
 	}
 	
 	// Note: IE10 and Maxthon return the window.FileReader as 'function' but fail to read image
@@ -110,10 +110,26 @@ var CoreMobCamera = (function() {
 		});
 	}
 	
+	function createGallery() {
+		CoreMobCameraDB.openDB();
+		savePhoto();
+		//displayThumbnails();
+		scrollInfinitely();
+	}
+	
+	function savePhoto() {
+		var data = {title:'sandy', filePath:'images/na.png'}
+		CoreMobCameraDB.putPhotoInDB(data);
+	}
+	
 	function displayThumbnails() {
 		var eachWidth = document.querySelector('.thumb').offsetWidth + 5,
 			numThumb = (window.innerWidth / eachWidth) >>> 0;
 		document.getElementById('thumbnails').style.width = numThumb * eachWidth + 'px';
+	}
+	
+	function scrollInfinitely() {
+		
 	}
 	
 	function displayJpegAndRemoveCanvas(jpg) {
@@ -170,12 +186,14 @@ var CoreMobCamera = (function() {
 			loader.setAttribute('hidden', 'hidden');
 	        return;
 	    }
-	    if (localFile.size > maxFilesize) {
+	    
+	    if (localFile.size > maxFilesize) { //this should exclude panorama pics
 	        error.textContent = 'The file size is too large.';
 			error.removeAttribute('hidden');
 			loader.setAttribute('hidden', 'hidden');
 	        return;
 	    }
+	    
 		// display the selected image
 	    var orig = document.getElementById('userPhoto');
 	    var imgFile = new FileReader();

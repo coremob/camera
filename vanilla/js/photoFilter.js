@@ -31,12 +31,12 @@ PhotoFilter.prototype = {
 	},
 
     filterImage: function(filter, args) {
-	    var data = [this.ctx.getImageData(0, 0, this.c.width, this.c.height)];
+	    var params = [this.ctx.getImageData(0, 0, this.c.width, this.c.height)];
 	   
 		for (var i=1; i <arguments.length; i++) {
-			data.push(arguments[i]);
+			params.push(arguments[i]);
 		} 
-		this.pixelData =  this[filter].apply(null, data);
+		this.pixelData =  this[filter].apply(this, params);
 		this.render();
     },
     
@@ -53,19 +53,6 @@ PhotoFilter.prototype = {
     	this.imgObj.parentNode.appendChild(this.c);
         this.imgObj.setAttribute('hidden', 'hidden'); 
     },
-    
-    /* ImageData.data object (CanvasPixelArray is now legacy)
-    	
-    	Desktop:
-		Chrome22 desktop - Uint8ClampedArray
-		
-		Mobile:
-		FF 14 - Uint8ClampedArray
-		Opera Mobile 12 - Uint8ClampedArray
-		Chrome 18 - CanvasPixelArray
-		Android 4 - CanvasPixelArray
-		IE10 - CanvasPixelArray
-	*/
 	
     grayscale: function(pixels, args) {
 	    var d = pixels.data;
