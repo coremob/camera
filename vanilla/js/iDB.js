@@ -1,4 +1,4 @@
-var CoreMobCameraDB = (function(){
+var iDB = (function(){
 
 	var db;
 	var objStoreName = 'photo';
@@ -60,7 +60,7 @@ var CoreMobCameraDB = (function(){
         
         // Newer browsers only - FF, Chrome (newer than ?), IE10
         req.onupgradeneeded = function(e) {
-        	console.log('onupgradeneeded');
+        	alert('onupgradeneeded');
 		    createObjStore(e.target.result);
 		};
     }
@@ -74,48 +74,51 @@ var CoreMobCameraDB = (function(){
     }
     
     function getPhotoFromDB() {
-	    var transaction = db.transaction(['photo'], 'readwrite');
+	    var transaction = db.transaction(['photo']);
         var objStore = transaction.objectStore('photo');
         console.log(objStore); 
         
         // Get everything in object store;
-        var photos = [];
         var cursorReq = objStore.openCursor();
+        
+        var photos = [];
       
         cursorReq.onsuccess = function(e) {
-          var cursor = e.target.result;
-          
-          if(cursor) {
-          	  var item = cursor.value;
-	          console.log('key: ' + cursor.key + ' value.title: ' + cursor.value.title + ' value.blob: ' + cursor.value.blob);
-	          if(cursor.value.blob) {
-		          //objStore.get(cursor.key).onsuccess = function(e) {
-		          	  //var val = e.target.result;
+        	
+        	var cursor = e.target.result;
+        	if(cursor) {
+          	  	var item = cursor.value;
+          	  	//console.log('key: ' + cursor.key + ', value.title: ' + cursor.value.title + ', value.blob: ' + cursor.value.blob);
+	    
+          	  	if(cursor.value.blob) {
 		          	  var imgUrl = window.URL.createObjectURL(cursor.value.blob);
 		          	  item.blob = imgUrl;
-		          //}
-	          } 
-	          photos.push(item);
-	          cursor.continue();
+		        } 
+		        photos.push(item);
+		        cursor.continue();
           } else {
-          	if(photos.length > 0) { // done getting all data
-          		//console.log(photos);
-	          	renderPhotos(photos);
-          	} else {
-	          	//no data
-          	}
+              if(photos.length > 0) { // done getting all data
+	          	renderPhotos(photos, true);
+	          } else {
+	          	//no data -- I need some "welcome" UI for the first run here
+	          }
           }
-        };
+      };
       
         cursorReq.onerror = dbFailureHandler;
     }
     
     function putPhotoInDB(data) {
-    	// data.title, data.filePath
-	    retrieveBlob(data);
+    	// 1. data.title 2. data.filePath or data.base64
+    	if(data.filePath) {
+    		getBlobFromFilePath(data);
+    	} else { // data.blob should have blob
+	    	storeInDB(data);
+    	}
     }
     
-    function retrieveBlob(data) {
+    function getBlobFromFilePath(data) {
+    	console.log('getBlobFromFilePath');
 		var xhr = new XMLHttpRequest();
 		var blob;
 		 
@@ -146,42 +149,64 @@ var CoreMobCameraDB = (function(){
         try {   
         	req = objStore.put(data);   
         } catch(e) {
-        	alert('This browser does not clone blob');
+        	alert('This browser can not store blob in IndexedDB :(');
+        	console.log(e.name + ': ' + e.message);
 	        return;
         }
         
         req.onsuccess = function(e) {
-        	console.log('blob stored in iDB successfuly!');
-        	getPhotoFromDB();
+        	console.log('A blob stored in iDB successfuly!');
+        	//getPhotoFromDB();
+        	var imgUrl = window.URL.createObjectURL(data.blob);
+ 
+        	
+        	renderPhotos({
+	        	title: data.title,
+	        	blob: imgUrl
+        	});
         };
         req.onfailure = function(e) {
-        	alert(e);
+        	console.log(e);
         };
-
     }
     
+
     function renderPhotos(arr) {
     	
     	var wrapper = document.querySelector('.thumbnail-wrapper');
-
-	    var i = arr.length;
-	    console.log('rendering ' + i + ' photos');
+    	
+    	var thumb = function(imgUrl) {
+	    	var el = document.createElement('div');
+	    	el.className = 'thumb';
+	    	el.style.backgroundImage = 'url('+imgUrl+')';
+	    	
+	    	setTimeout(function(){
+				window.URL.revokeObjectURL(imgUrl);
+			}, 100)
+			
+	    	return el;
+    	};
+ 
+	    if(arr instanceof Array) {
+	    	var i = arr.length;
+		    console.log('rendering ' + i + ' photos');
 	    
-	    while (i = arr.pop()) {
-	    	//console.log(i.id);
-	    	if(i.blob) { // the blob in the array is just its obj url, not actual blob
-	    		var imgUrl = i.blob;
-		    	var el = document.createElement('img');
-		    	el.className = 'thumb';
-		    	
-		    	setTimeout(function(){
-		    		el.src = imgUrl;
-					window.URL.revokeObjectURL(imgUrl);
-				}, 100)
-		    	
-		    	wrapper.appendChild(el);
-	    	}
-		}
+		    while (i = arr.pop()) {
+		    	if(i.blob) { // the blob in the array is just its obj url, not actual blob
+		    		var imgUrl = i.blob;
+		    		console.log(i.id+ ': ' +imgUrl);
+			    	var el = thumb(imgUrl);
+			    	wrapper.appendChild(el);
+		    	}
+			}
+	    } else { // only the lat photo
+		    if(arr.blob) {
+			    var imgUrl = arr.blob;
+		    	console.log('Added: ' +imgUrl);
+			    var el = thumb(imgUrl);
+			    wrapper.insertBefore(el, wrapper.firstChild);
+		    }
+	    }
     }
     
 })();

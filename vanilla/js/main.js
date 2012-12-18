@@ -104,26 +104,51 @@ var CoreMobCamera = (function() {
 				
 		// Save a photo -- not done yet
 		document.getElementById('saveButton').addEventListener('click', function(){ 
-			var jpg = document.getElementsByTagName('canvas')[0].toDataURL('image/jpeg');
-			displayJpegAndRemoveCanvas(jpg);
-			window.open(jpg);
+			// to Blob
+			// Supported: Firefox Mobile
+			// Not supported on Chrome 25
+			if (window.HTMLCanvasElement && window.HTMLCanvasElement.prototype.toBlob) {
+				alert('toBlob supported!!!');
+				var blob = document.getElementsByTagName('canvas')[0].toBlob(function(blob){
+					var data = {blob: blob};
+					data.title = window.prompt('Description:');
+					savePhoto(data);
+				}, 'image/jpeg');		
+				
+				setTimeout(function() {
+				sectionMain.removeAttribute('hidden');
+				sectionPhotoEffect.setAttribute('hidden', 'hidden');
+				sectionFilterDrawer.setAttribute('hidden', 'hidden');
+				}, 1)
+			} else {
+				alert('toBlob not supported');
+				
+				// TO DO - try saving to base64 then store as blob in iDB
+				// also need a fallback when everything fails
+				
+				/*
+				// to Base64
+				var jpg = document.getElementsByTagName('canvas')[0].toDataURL('image/jpeg');
+				*/
+			}
+			
 		});
 	}
 	
 	function createGallery() {
-		CoreMobCameraDB.openDB();
-		savePhoto();
-		//displayThumbnails();
+		iDB.openDB();
+		displayThumbnails();
 		scrollInfinitely();
 	}
 	
-	function savePhoto() {
-		var data = {title:'sandy', filePath:'images/na.png'}
-		CoreMobCameraDB.putPhotoInDB(data);
+	function savePhoto(data) {
+	console.log('calling DB');
+		//var data = {title:'sandy', filePath:'images/na.png'}
+		iDB.putPhotoInDB(data);
 	}
 	
 	function displayThumbnails() {
-		var eachWidth = document.querySelector('.thumb').offsetWidth + 5,
+		var eachWidth = 100, // css .thumb
 			numThumb = (window.innerWidth / eachWidth) >>> 0;
 		document.getElementById('thumbnails').style.width = numThumb * eachWidth + 'px';
 	}
@@ -132,6 +157,10 @@ var CoreMobCamera = (function() {
 		
 	}
 	
+	function getBlobFromBase64(data) {
+	    // if canvas.toBlob is not supported
+    }
+    
 	function displayJpegAndRemoveCanvas(jpg) {
 		resultPhoto.setAttribute('src', jpg);
 		var canvas = document.getElementsByTagName('canvas')[0];

@@ -229,11 +229,12 @@ h2.label {
 }
 .thumb {
 	display: inline-block;
-	width: 80px;
-	height: 80px;
+	width: 95px;
+	height: 95px;
 	margin: 0 0 5px 5px;
 	background-repeat: no-repeat;
 	background-position: left top;
+	background-size: cover;
 	box-shadow: inset 0 0 6px #000;
 }
 /*
