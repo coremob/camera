@@ -6,6 +6,12 @@
 var PhotoFilter = function(imgObj) {
 	this.imgObj = imgObj;
     
+    // Removing the previously created canvas
+	var prevEffect = document.getElementById('filteredPhoto');
+	if(prevEffect) {	
+		prevEffect.parentNode.removeChild(prevEffect);
+	}
+							 
     this.c = document.createElement('canvas');
     this.c.id = 'filteredPhoto';
     

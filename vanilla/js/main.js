@@ -32,6 +32,12 @@ var CoreMobCamera = (function() {
 		createGallery();
 	}
 	
+	function reInit() {
+		sectionMain.removeAttribute('hidden');
+		sectionPhotoEffect.setAttribute('hidden', 'hidden');
+		sectionFilterDrawer.setAttribute('hidden', 'hidden');
+	}
+	
 	// Note: IE10 and Maxthon return the window.FileReader as 'function' but fail to read image
 	// I need to write another capability check besides this function
 	function displayWarning() {
@@ -66,14 +72,7 @@ var CoreMobCamera = (function() {
 
 			setTimeout(function(){
 				ApplyEffects[filterButton.id](resultPhoto);
-			}, 1)
-				
-			// Removing the previously created canvas
-			var prevEffect = document.getElementById('filteredPhoto');
-			if(prevEffect) {	
-				prevEffect.parentNode.removeChild(prevEffect);
-			}
-			resultPhoto.removeAttribute('hidden');		
+			}, 1);	
 			
 		    (function () {
 				if(document.getElementById('filteredPhoto')) {
@@ -108,20 +107,18 @@ var CoreMobCamera = (function() {
 			// Supported: Firefox Mobile
 			// Not supported on Chrome 25
 			if (window.HTMLCanvasElement && window.HTMLCanvasElement.prototype.toBlob) {
-				alert('toBlob supported!!!');
-				var blob = document.getElementsByTagName('canvas')[0].toBlob(function(blob){
+				console.log('toBlob() supported!!!');
+				
+				var canvas = (document.getElementById('filteredPhoto')) ? document.getElementById('filteredPhoto') : document.getElementById('croppedPhoto');		
+	
+				var blob = canvas.toBlob(function(blob){
 					var data = {blob: blob};
 					data.title = window.prompt('Description:');
-					savePhoto(data);
-				}, 'image/jpeg');		
-				
-				setTimeout(function() {
-				sectionMain.removeAttribute('hidden');
-				sectionPhotoEffect.setAttribute('hidden', 'hidden');
-				sectionFilterDrawer.setAttribute('hidden', 'hidden');
-				}, 1)
+					iDB.putPhotoInDB(data);
+				}, 'image/jpeg');
+	
 			} else {
-				alert('toBlob not supported');
+				console.log('toBlob() not supported');
 				
 				// TO DO - try saving to base64 then store as blob in iDB
 				// also need a fallback when everything fails
@@ -132,23 +129,30 @@ var CoreMobCamera = (function() {
 				*/
 			}
 			
-		});
+			setTimeout(reInit, 1);
+			
+
+		}, false);
+		
+/*
+		document.getElementById('clearDB').addEventListener('click', function(){
+			iDB.deleteDB();
+		}, false);
+*/
 	}
 	
+	var base64ToBlob = function() {
+	    // if canvas.toBlob is not supported
+    }
+    
 	function createGallery() {
 		iDB.openDB();
 		displayThumbnails();
 		scrollInfinitely();
 	}
-	
-	function savePhoto(data) {
-	console.log('calling DB');
-		//var data = {title:'sandy', filePath:'images/na.png'}
-		iDB.putPhotoInDB(data);
-	}
-	
+
 	function displayThumbnails() {
-		var eachWidth = 100, // css .thumb
+		var eachWidth = 105, // css .thumb
 			numThumb = (window.innerWidth / eachWidth) >>> 0;
 		document.getElementById('thumbnails').style.width = numThumb * eachWidth + 'px';
 	}
@@ -156,10 +160,6 @@ var CoreMobCamera = (function() {
 	function scrollInfinitely() {
 		
 	}
-	
-	function getBlobFromBase64(data) {
-	    // if canvas.toBlob is not supported
-    }
     
 	function displayJpegAndRemoveCanvas(jpg) {
 		resultPhoto.setAttribute('src', jpg);
@@ -178,15 +178,24 @@ var CoreMobCamera = (function() {
 	    });
 	    
 	    imgCrop.displayResult();
-	    		
+
 		// Toggle the UI
 		sectionMain.setAttribute('hidden', 'hidden');
 		sectionPhotoCrop.removeAttribute('hidden');
 		document.getElementById('textDimension').textContent = finalWidth + ' x ' + finalHeight;
 		
 		document.getElementById('cropApply').addEventListener('click', function(){
+		
 			var newImg = imgCrop.getDataURL();
-			resultPhoto.setAttribute('src', newImg);
+			resultPhoto.src = newImg;
+			
+			// Removing the previously created canvas
+			var prevEffect = document.getElementById('filteredPhoto');
+			if(prevEffect) {	
+				prevEffect.parentNode.removeChild(prevEffect);
+				resultPhoto.removeAttribute('hidden');
+			}
+	
 			sectionPhotoCrop.setAttribute('hidden', 'hidden');
 			sectionPhotoEffect.removeAttribute('hidden');
 			sectionFilterDrawer.removeAttribute('hidden');
@@ -293,6 +302,8 @@ var CoreMobCamera = (function() {
 		error.textContent = 'The upload has been canceled by the user or the connection has been dropped.';
 		error.removeAttribute('hidden');
 	}
+	
+	init();
 }());
 
  

@@ -17,6 +17,7 @@ var iDB = (function(){
 	
 	return {
 		openDB: openDB,
+		deleteDB: deleteDB,
 		putPhotoInDB: putPhotoInDB
 	};
 
@@ -28,18 +29,19 @@ var iDB = (function(){
     function openDB() {
     	if(typeof window.indexedDB === 'undefined') {
         	// unsupported. do something
-        	alert('iDB is not supported on your browser!');
+        	alert('IndexedDB is not supported on your browser!');
         	return;
         }
 
-        var req = window.indexedDB.open('gallery', 1); // IE10 doesn't like variables as values
+        var req = window.indexedDB.open('gallery', 1); // IE10 doesn't like variables as db names & ver
       
         req.onsuccess = function(e) {
         	db = e.target.result;
         	console.log(db);
         	
-        	// For Chrome < 23 -- newer Chrome & FF deprecated it and use onupgradeneeded event
+        	// For Chrome < 23 (incl. mobile. v18) -- newer Chrome & FF deprecated it and use onupgradeneeded event
         	if(typeof db.setVersion !== 'undefined') {
+        		console.log('using the deprecated setVersion');
 	        	if(db.version != 1) {
 		            var setVersionReq = db.setVersion(1);
 		            
@@ -74,8 +76,8 @@ var iDB = (function(){
     }
     
     function getPhotoFromDB() {
-	    var transaction = db.transaction(['photo']);
-        var objStore = transaction.objectStore('photo');
+	    var transaction = db.transaction([objStoreName]);
+        var objStore = transaction.objectStore(objStoreName);
         console.log(objStore); 
         
         // Get everything in object store;
@@ -88,8 +90,7 @@ var iDB = (function(){
         	var cursor = e.target.result;
         	if(cursor) {
           	  	var item = cursor.value;
-          	  	//console.log('key: ' + cursor.key + ', value.title: ' + cursor.value.title + ', value.blob: ' + cursor.value.blob);
-	    
+
           	  	if(cursor.value.blob) {
 		          	  var imgUrl = window.URL.createObjectURL(cursor.value.blob);
 		          	  item.blob = imgUrl;
@@ -101,6 +102,7 @@ var iDB = (function(){
 	          	renderPhotos(photos, true);
 	          } else {
 	          	//no data -- I need some "welcome" UI for the first run here
+	          	document.querySelector('.welcomeMessage').removeAttribute('hidden');
 	          }
           }
       };
@@ -112,8 +114,10 @@ var iDB = (function(){
     	// 1. data.title 2. data.filePath or data.base64
     	if(data.filePath) {
     		getBlobFromFilePath(data);
-    	} else { // data.blob should have blob
+    	} else if(data.blob) {
 	    	storeInDB(data);
+    	} else {
+	    	console.log('No image data received.');
     	}
     }
     
@@ -142,23 +146,20 @@ var iDB = (function(){
 	    var transaction = db.transaction([objStoreName], 'readwrite');	    
         var objStore = transaction.objectStore(objStoreName);
         
-        // store the blob into the db
-        // Uncaught Error: DataCloneError: DOM IDBDatabase Exception 25
-        
+        // store the blob into the db        
         var req;
         try {   
         	req = objStore.put(data);   
         } catch(e) {
-        	alert('This browser can not store blob in IndexedDB :(');
-        	console.log(e.name + ': ' + e.message);
+        	//alert('This browser can not store blob in IndexedDB.');
+        	alert(e.name + ': ' + e.message);
 	        return;
         }
         
         req.onsuccess = function(e) {
         	console.log('A blob stored in iDB successfuly!');
-        	//getPhotoFromDB();
+
         	var imgUrl = window.URL.createObjectURL(data.blob);
- 
         	
         	renderPhotos({
 	        	title: data.title,

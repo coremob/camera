@@ -32,19 +32,19 @@ body {
     padding: 0;
 }
 header {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    background: rgba(255,255,255,0.1);
-    margin-bottom: 1.2em;
     text-align: center;
 }
 header h1 {
-    font-size: 1.75em;
+    font-size: 2em;
+    font-weight: normal;
     line-height: 50px;
-    color: #f08;
-    text-shadow: 1px 2px 2px rgba(0,0,0,0.5);
-    font-weight: 300;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.2), -1px -1px 0 rgba(0, 0, 0, 0.75);
+    color: rgba(20,19,21,0.8); 
     margin: 0;
     padding: 0 1em;
+}
+p {
+	text-shadow: 0 -1px 2px #000;
 }
 nav {
 	position: fixed;
@@ -69,6 +69,10 @@ footer {
 
 
 /* Main Pane */
+
+#messages {
+	margin: 0 1em;
+}
 
 #main {
     
@@ -229,8 +233,8 @@ h2.label {
 }
 .thumb {
 	display: inline-block;
-	width: 95px;
-	height: 95px;
+	width: 100px;
+	height: 100px;
 	margin: 0 0 5px 5px;
 	background-repeat: no-repeat;
 	background-position: left top;

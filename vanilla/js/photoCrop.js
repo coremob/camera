@@ -8,12 +8,16 @@ var PhotoCrop = function(imgObj, options) {
     // Merge the contents of options objects together into the default settings.
     this.extend(this.settings, options);
     
+    var prevCanvas = document.getElementById('croppedPhoto');
+    if(prevCanvas){
+		prevCanvas.parentNode.removeChild(prevCanvas);
+    }
+    
     this.init();
 }
 
 PhotoCrop.prototype = {
     init: function() {
-        //console.log(this.settings); 
         this.canvas = document.createElement('canvas');
         this.canvas.id = 'croppedPhoto';
         this.canvas.width = this.settings.size.w;
