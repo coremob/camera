@@ -101,52 +101,44 @@ var CoreMobCamera = (function() {
 			startUpload();
 		}, false);
 				
-		// Save a photo -- not done yet
+				
+		/* Save Blob in iDB 
+		/* Supported: Firefox Mobile
+		/* Not supported on Chrome 25
+		*/
 		document.getElementById('saveButton').addEventListener('click', function(){ 
-			// to Blob
-			// Supported: Firefox Mobile
-			// Not supported on Chrome 25
-			if (window.HTMLCanvasElement && window.HTMLCanvasElement.prototype.toBlob) {
-				console.log('toBlob() supported!!!');
-				
-				var canvas = (document.getElementById('filteredPhoto')) ? document.getElementById('filteredPhoto') : document.getElementById('croppedPhoto');		
-	
+			var data = {};
+			var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');		
+			
+			if (canvas.toBlob) {
 				var blob = canvas.toBlob(function(blob){
-					var data = {blob: blob};
-					data.title = window.prompt('Description:');
-					iDB.putPhotoInDB(data);
+					data.blob = blob; console.log(data.blob);
 				}, 'image/jpeg');
-	
-			} else {
-				console.log('toBlob() not supported');
-				
-				// TO DO - try saving to base64 then store as blob in iDB
-				// also need a fallback when everything fails
-				
-				/*
-				// to Base64
-				var jpg = document.getElementsByTagName('canvas')[0].toDataURL('image/jpeg');
-				*/
+			} else { // to Base64 then Blob
+				var dataUrl = document.getElementsByTagName('canvas')[0].toDataURL('image/jpeg');
+				data.blob = util.dataUrlToBlob(dataUrl);
+				if(data.blob == null) {
+					alert('Your browser does not support Blob Constructing.');
+					return;
+				}
 			}
 			
+			data.title = util.stripHtml(window.prompt('Description:'));
+			CoreMobCameraiDB.putPhotoInDB(data);
 			setTimeout(reInit, 1);
 			
 
 		}, false);
 		
-/*
+
 		document.getElementById('clearDB').addEventListener('click', function(){
-			iDB.deleteDB();
+			CoreMobCameraiDB.deleteDB();
 		}, false);
-*/
+
 	}
-	
-	var base64ToBlob = function() {
-	    // if canvas.toBlob is not supported
-    }
     
 	function createGallery() {
-		iDB.openDB();
+		CoreMobCameraiDB.openDB();
 		displayThumbnails();
 		scrollInfinitely();
 	}
@@ -302,8 +294,6 @@ var CoreMobCamera = (function() {
 		error.textContent = 'The upload has been canceled by the user or the connection has been dropped.';
 		error.removeAttribute('hidden');
 	}
-	
-	init();
 }());
 
  

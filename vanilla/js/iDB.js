@@ -1,4 +1,4 @@
-var iDB = (function(){
+var CoreMobCameraiDB = (function(){
 
 	var db;
 	var objStoreName = 'photo';
@@ -23,7 +23,7 @@ var iDB = (function(){
 
 	function deleteDB() {
 		var req = window.indexedDB.deleteDatabase('gallery');
-		req.onsuccess = function(){console.log('db deleted')}
+		req.onsuccess = function(){alert('Indexed DB is deleted')}
 	}
 	
     function openDB() {
@@ -62,7 +62,7 @@ var iDB = (function(){
         
         // Newer browsers only - FF, Chrome (newer than ?), IE10
         req.onupgradeneeded = function(e) {
-        	alert('onupgradeneeded');
+        	console.log('onupgradeneeded');
 		    createObjStore(e.target.result);
 		};
     }
