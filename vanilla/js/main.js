@@ -67,7 +67,7 @@ var CoreMobCamera = (function() {
 		// Screen orientation/size change
 		var orientationEvent = ('onorientationchange' in window) ? 'orientationchange' : 'resize';
 		window.addEventListener(orientationEvent, function() {
-		    displayThumbnails();
+		    displayThumbnails(true);
 		}, false);
 
 		
@@ -196,11 +196,18 @@ var CoreMobCamera = (function() {
 		scrollInfinitely();		
 	}
 
-	function displayThumbnails() {	
+	function displayThumbnails(resizeScreen) {	
 		var eachWidth = 105, // css .thumb
 			numThumb = (window.innerWidth / eachWidth) >>> 0;
 		
 		document.getElementById('thumbnails').style.width = numThumb * eachWidth + 'px';
+		
+		var container = document.querySelector('.swiper-container');
+		var viewWidth = (window.innerWidth < 612) ? window.innerWidth : 612;
+		container.style.width = viewWidth +'px';
+		container.style.height = (viewWidth + 60) + 'px';
+		
+		if(resizeScreen) return;
 		
 		(function() {
 			if(document.querySelector('.thumb')) {
@@ -213,9 +220,15 @@ var CoreMobCamera = (function() {
 	}
 	
 	function cloneThumbNode() {
-		// import the node for the single view
-		var thumbNode = document.querySelector('.thumbnail-wrapper');
+
+		var container = document.querySelector('.swiper-container');
+/*
+		var viewWidth = (window.innerWidth < 612) ? window.innerWidth : 612;
+		container.style.width = viewWidth +'px';
+		container.style.height = (viewWidth + 60) + 'px';
+*/
 		
+		var thumbNode = document.querySelector('.thumbnail-wrapper');
 		thumbViewNode = thumbNode.cloneNode();
 		thumbViewNode.className = 'swiper-wrapper';
 		var children = thumbViewNode.children;
@@ -225,13 +238,7 @@ var CoreMobCamera = (function() {
 			children[i].className = 'swiper-slide';
 		}
 		
-		// cloning the thumbnail node
-		var container = document.querySelector('.swiper-container');
 		container.appendChild(thumbViewNode);	
-
-		var viewWidth = (window.innerWidth < 612) ? window.innerWidth : 612;
-		container.style.width = viewWidth +'px';
-		container.style.height = viewWidth +'px';
 	}
 	
 	function scrollInfinitely() {

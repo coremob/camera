@@ -177,11 +177,14 @@ var CoreMobCameraiDB = (function(){
     	var wrapper = document.querySelector('.thumbnail-wrapper');
     	
     	var thumb = function(id, title, imgUrl, index) {
-	    	var el = document.createElement('div');
+	    	var el = document.createElement('figure');
 	    	el.className = 'thumb s'+index;
 	    	el.dataset.id = id;
-	    	el.dataset.desc = title;
 	    	el.style.backgroundImage = 'url('+imgUrl+')';
+	    	
+	    	var cap = document.createElement('figcaption');
+	    	cap.textContent = title;
+	    	el.appendChild(cap);
 	    	
 	    	setTimeout(function(){
 				window.URL.revokeObjectURL(imgUrl);
