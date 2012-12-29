@@ -253,7 +253,7 @@ Swiper = function(selector, params, callback) {
 		wrapper.style.height = wrapperHeight+"px";
 		
 		// Set Initial Slide Position	
-		if(params.initialSlide > 0 && params.initialSlide < numOfSlides) {
+		if(params.initialSlide < numOfSlides) {
 			_this.realIndex = params.initialSlide;
 						
 			if (isHorizontal) {
