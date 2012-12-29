@@ -7,6 +7,7 @@
 var CoreMobCamera = (function() {
 	
 	var maxFilesize = 1048576 * 3; // Max image size is 3MB (iPhone5, Galaxy SIII, Lumia920 < 3MB)
+	var numPhotosSaved = 0;
 	
 	// UI
 	var loader = document.querySelector('.loader'),
@@ -15,7 +16,8 @@ var CoreMobCamera = (function() {
 		sectionPhotoCrop = document.getElementById('photoCrop'),
 		sectionPhotoEffect = document.getElementById('photoEffect'),
 		sectionFilterDrawer = document.getElementById('filterDrawer'),
-		resultPhoto = document.getElementById('resultPhoto');
+		resultPhoto = document.getElementById('resultPhoto'),
+		sectionSingleView = document.getElementById('thumbSingleView'); 
 	
 	return {
 		init: init
@@ -36,6 +38,21 @@ var CoreMobCamera = (function() {
 		sectionMain.removeAttribute('hidden');
 		sectionPhotoEffect.setAttribute('hidden', 'hidden');
 		sectionFilterDrawer.setAttribute('hidden', 'hidden');
+		
+		var cn = '.thumb.s'+numPhotosSaved;
+		console.log(cn);
+		
+		(function() {
+			if(document.querySelector(cn)) {
+				var oldClone = document.querySelector('.swiper-wrapper');
+				oldClone.parentNode.removeChild(oldClone);
+				cloneThumbNode();
+			} else {
+				console.log('new thumb not loaded yet...');
+				setTimeout(arguments.callee, 500);
+			}
+		})();
+		numPhotosSaved++;
 	}
 	
 	// Note: IE10 and Maxthon return the window.FileReader as 'function' but fail to read image
@@ -125,6 +142,7 @@ var CoreMobCamera = (function() {
 			
 			data.title = util.stripHtml(window.prompt('Description:'));
 			CoreMobCameraiDB.putPhotoInDB(data);
+			
 			setTimeout(reInit, 1);
 			
 
@@ -134,19 +152,86 @@ var CoreMobCamera = (function() {
 		document.getElementById('clearDB').addEventListener('click', function(){
 			CoreMobCameraiDB.deleteDB();
 		}, false);
+		
+		
+		/*
+		/*  View a single photo from the Gallery
+		*/
+		
+		var thumbs = document.getElementById('thumbnails');
+		
+		thumbs.addEventListener('click', function(e){
+
+			if(e.target.classList.contains('thumb')) {
+				var classnames = e.target.className;
+				var index = parseInt(classnames.replace('thumb s', ''));
+				var revIndex = numPhotosSaved - index -1;
+
+				var swiper = new Swiper('.swiper-container', { 
+					pagination: '.pagination',
+					initialSlide: revIndex
+				});
+			
+				sectionSingleView.removeAttribute('hidden');
+				sectionMain.setAttribute('hidden', 'hidden');
+
+
+			} else {
+				return;
+			}
+			console.log(e.target);
+		
+		}, false);
+		
+		document.getElementById('dismissSingleView').addEventListener('click', function(e){
+			sectionMain.removeAttribute('hidden');
+			sectionSingleView.setAttribute('hidden', 'hidden');
+		}, false);
 
 	}
     
 	function createGallery() {
 		CoreMobCameraiDB.openDB();
 		displayThumbnails();
-		scrollInfinitely();
+		scrollInfinitely();		
 	}
 
-	function displayThumbnails() {
+	function displayThumbnails() {	
 		var eachWidth = 105, // css .thumb
 			numThumb = (window.innerWidth / eachWidth) >>> 0;
+		
 		document.getElementById('thumbnails').style.width = numThumb * eachWidth + 'px';
+		
+		(function() {
+			if(document.querySelector('.thumb')) {
+				cloneThumbNode();
+			} else {
+				console.log('thumbs not loaded yet...');
+				setTimeout(arguments.callee, 500);
+			}
+		})();
+	}
+	
+	function cloneThumbNode() {
+		// import the node for the single view
+		var thumbNode = document.querySelector('.thumbnail-wrapper');
+		
+		thumbViewNode = thumbNode.cloneNode();
+		thumbViewNode.className = 'swiper-wrapper';
+		var children = thumbViewNode.children;
+		numPhotosSaved = children.length;
+		
+		for (var i = 0; i < numPhotosSaved; i++) {
+			children[i].className = 'swiper-slide';
+		}
+		
+		// cloning the thumbnail node
+		var container = document.querySelector('.swiper-container');
+		container.appendChild(thumbViewNode);	
+
+		var viewWidth = (window.innerWidth < 612) ? window.innerWidth : 612;
+		container.style.width = viewWidth +'px';
+		container.style.height = viewWidth +'px';
 	}
 	
 	function scrollInfinitely() {

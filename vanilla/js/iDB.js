@@ -2,6 +2,7 @@ var CoreMobCameraiDB = (function(){
 
 	var db;
 	var objStoreName = 'photo';
+	var numPhotosSaved = 0;
 	
 	// Supported without prefix: IE10
 	// Supported with Prefix: Chrome, Blackberry10 and Firefox Mobile 15
@@ -47,11 +48,8 @@ var CoreMobCameraiDB = (function(){
 		            
 		            setVersionReq.onsuccess = function(e) {
 		                createObjStore(db);
-		                getPhotoFromDB();
 		            };
 		            setVersionReq.onfailure = dbFailureHandler;
-		        } else {
-			        getPhotoFromDB();
 		        }
         	}
 
@@ -84,7 +82,7 @@ var CoreMobCameraiDB = (function(){
         var cursorReq = objStore.openCursor();
         
         var photos = [];
-      
+  
         cursorReq.onsuccess = function(e) {
         	
         	var cursor = e.target.result;
@@ -97,16 +95,10 @@ var CoreMobCameraiDB = (function(){
 		        } 
 		        photos.push(item);
 		        cursor.continue();
-          } else {
-              if(photos.length > 0) { // done getting all data
-	          	renderPhotos(photos, true);
-	          } else {
-	          	//no data -- I need some "welcome" UI for the first run here
-	          	document.querySelector('.welcomeMessage').removeAttribute('hidden');
-	          }
-          }
-      };
-      
+		    } else {
+            	renderPhotos(photos);
+	        }
+        }
         cursorReq.onerror = dbFailureHandler;
     }
     
@@ -163,6 +155,7 @@ var CoreMobCameraiDB = (function(){
         	
         	renderPhotos({
 	        	title: data.title,
+	        	id: data.id,
 	        	blob: imgUrl
         	});
         };
@@ -173,12 +166,21 @@ var CoreMobCameraiDB = (function(){
     
 
     function renderPhotos(arr) {
+    	if (arr instanceof Array && arr.length == 0) {
+	    	var welcome = document.createElement('p');
+	    	welcome.className = 'thumb welcome';
+	    	welcome.textContent = 'Welcome to CoreMob Camera!';
+	    	document.getElementById('messages').appendChild(welcome);
+	    	return;
+    	}
     	
     	var wrapper = document.querySelector('.thumbnail-wrapper');
     	
-    	var thumb = function(imgUrl) {
+    	var thumb = function(id, title, imgUrl, index) {
 	    	var el = document.createElement('div');
-	    	el.className = 'thumb';
+	    	el.className = 'thumb s'+index;
+	    	el.dataset.id = id;
+	    	el.dataset.desc = title;
 	    	el.style.backgroundImage = 'url('+imgUrl+')';
 	    	
 	    	setTimeout(function(){
@@ -189,31 +191,30 @@ var CoreMobCameraiDB = (function(){
     	};
  
 	    if(arr instanceof Array) {
-	    	var i = arr.length;
+	    	var i, idx;
+	    	numPhotosSaved = i = idx = arr.length;
+	    
 		    console.log('rendering ' + i + ' photos');
 	    
 		    while (i = arr.pop()) {
+		    	idx--;
 		    	if(i.blob) { // the blob in the array is just its obj url, not actual blob
 		    		var imgUrl = i.blob;
-		    		console.log(i.id+ ': ' +imgUrl);
-			    	var el = thumb(imgUrl);
+			    	var el = thumb(i.id, i.title, imgUrl, idx);
 			    	wrapper.appendChild(el);
 		    	}
 			}
-	    } else { // only the lat photo
+
+	    } else { // When a new photo is added
 		    if(arr.blob) {
 			    var imgUrl = arr.blob;
-		    	console.log('Added: ' +imgUrl);
-			    var el = thumb(imgUrl);
+		    	console.log('Added: ' + arr.id+ ' ' + imgUrl);
+			    var el = thumb(arr.id, arr.title, imgUrl, numPhotosSaved);
 			    wrapper.insertBefore(el, wrapper.firstChild);
+			    numPhotosSaved++;
+			    console.log(numPhotosSaved);
 		    }
 	    }
     }
     
 })();
-//https://hacks.mozilla.org/2012/02/storing-images-and-files-in-indexeddb/
-// http://www.html5rocks.com/en/tutorials/indexeddb/todo/
-// https://developer.mozilla.org/en-US/docs/IndexedDB/Using_IndexedDB#Using_a_cursor
-// http://caniuse.com/indexeddb
-
-// http://www.w3.org/TR/XMLHttpRequest2/#the-response-attribute

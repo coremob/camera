@@ -1,0 +1,94 @@
+/*
+ * Swiper - Mobile Touch Slider CSS
+ * http://www.idangero.us/sliders/swiper
+ *
+ * Vladimir Kharlampidi, The iDangero.us
+ * http://www.idangero.us/
+ * 
+ * Copyright 2012, Vladimir Kharlampidi
+ * The iDangero.us
+ * http://www.idangero.us
+ *
+ * Licensed under GPL & MIT
+ *
+*/
+
+/* Swiper Styles */
+.swiper-container {
+	margin:0 auto;
+	position:relative;
+	overflow:hidden;
+	-webkit-backface-visibility:hidden;
+	-moz-backface-visibility:hidden;
+	-ms-backface-visibility:hidden;
+	-o-backface-visibility:hidden;
+	backface-visibility:hidden;
+	/* Fix of Webkit flickering */
+	z-index:1;
+}
+.swiper-wrapper {
+	position:relative;
+	width:100%;
+	-webkit-transition-property:-webkit-transform;
+	-webkit-transition-duration:0s;
+	-webkit-transform:translate3d(0px,0,0);
+	-webkit-transition-timing-function:ease;
+	
+	-moz-transition-property:-moz-transform;
+	-moz-transition-duration:0s;
+	-moz-transform:translate3d(0px,0,0);
+	-moz-transition-timing-function:ease;
+	
+	-o-transition-property:-o-transform;
+	-o-transition-duration:0s;
+	-o-transform:translate3d(0px,0,0);
+	-o-transition-timing-function:ease;
+	
+	-ms-transition-property:-ms-transform;
+	-ms-transition-duration:0s;
+	-ms-transform:translate3d(0px,0,0);
+	-ms-transition-timing-function:ease;
+	
+	transition-property:transform;
+	transition-duration:0s;
+	transform:translate3d(0px,0,0);
+	transition-timing-function:ease;
+	
+}
+.swiper-slide {
+	float:left;
+	-webkit-transform:translate3d(0,0,0);
+	-o-transform:translate3d(0,0,0);
+	-moz-transform:translate3d(0,0,0);
+	-ms-transform:translate3d(0,0,0);
+	transform:translate3d(0,0,0);
+}
+
+/* IE10 Windows Phone 8 Fixes */
+.swiper-wp8-horizontal {
+	-ms-touch-action: pan-y;
+}
+.swiper-wp8-vertical {
+	-ms-touch-action: pan-x;
+}
+
+
+/* CUSTOM -- dynamically created with js */
+.swiper-container {
+	width: 612px;
+	height: 612px;
+}
+
+/* Pagination */
+.swiper-pagination-switch {
+    background: none repeat scroll 0 0 #999999;
+    border-radius: 10px 10px 10px 10px;
+    box-shadow: 0 1px 2px #555555 inset;
+    display: inline-block;
+    height: 10px;
+    margin: 0 3px;
+    width: 10px;
+}
+.swiper-active-switch {
+    background: none repeat scroll 0 0 #FFFFFF;
+}

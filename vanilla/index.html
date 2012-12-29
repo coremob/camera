@@ -20,7 +20,7 @@
     <link rel="shortcut icon" href="images/icons/144x144.png">
     
 	<link rel="stylesheet" href="css/style.css">
-
+	<link rel="stylesheet" href="css/swiper.css">
 </head>
 <body>	
 	<section class="loader" hidden>Processing...</section>
@@ -31,7 +31,6 @@
 		</header>
 		
 		<section id="messages">
-			<p class="welcomeMessage" hidden>Welcome to CoreMob Camera!</p>
 			<p class="errorMessage"></p>
 			<p id="userAgent" style="font-size:.75rem;"></p>
 		</section>
@@ -62,6 +61,14 @@
 	    <footer>
 		</footer>
 	</section>
+	
+	<!-- Gallery Carousel -->
+	<section id="thumbSingleView" hidden>
+		<div id="dismissSingleView">[X]</div>
+		<div class="swiper-container"></div>
+		<div class="pagination"></div>
+	</section>
+	
 	
 	<!-- Photo Preview -->
 	<section id="photoEffect" hidden>
@@ -138,6 +145,7 @@
 	
 	<script defer src="js/util.js"></script>
 	<script defer src="js/iDB.js"></script>
+	<script defer src="js/swiper-1.7.js"></script>
 	<script defer src="js/photoCrop.js"></script>
 	<script defer src="js/photoFilter.js"></script>
 	<script defer src="js/effects.js"></script>
