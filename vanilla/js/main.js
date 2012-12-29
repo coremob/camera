@@ -20,7 +20,8 @@ var CoreMobCamera = (function() {
 		sectionSingleView = document.getElementById('thumbSingleView'); 
 	
 	return {
-		init: init
+		init: init,
+		renderPhotos: renderPhotos
 	};
 	
 	function init() {
@@ -39,11 +40,13 @@ var CoreMobCamera = (function() {
 		sectionPhotoEffect.setAttribute('hidden', 'hidden');
 		sectionFilterDrawer.setAttribute('hidden', 'hidden');
 		
-		var cn = '.thumb.s'+numPhotosSaved;
-		console.log(cn);
+		//var cn = '.thumb.s'+numPhotosSaved;
+		var q = '[data-index=' + numPhotosSaved + ']'
+		console.log(q);
+
 		
 		(function() {
-			if(document.querySelector(cn)) {
+			if(document.querySelector(q)) {
 				var oldClone = document.querySelector('.swiper-wrapper');
 				oldClone.parentNode.removeChild(oldClone);
 				cloneThumbNode();
@@ -141,7 +144,7 @@ var CoreMobCamera = (function() {
 			}
 			
 			data.title = util.stripHtml(window.prompt('Description:'));
-			CoreMobCameraiDB.putPhotoInDB(data);
+			CoreMobCameraiDB.putPhotoInDB(data, CoreMobCamera.renderPhotos);
 			
 			setTimeout(reInit, 1);
 			
@@ -163,8 +166,9 @@ var CoreMobCamera = (function() {
 		thumbs.addEventListener('click', function(e){
 
 			if(e.target.classList.contains('thumb')) {
-				var classnames = e.target.className;
-				var index = parseInt(classnames.replace('thumb s', ''));
+				//var classnames = e.target.className;
+				//var index = parseInt(classnames.replace('thumb s', ''));
+				var index = parseInt(e.target.dataset.index);
 				var revIndex = numPhotosSaved - index -1;
 
 				var swiper = new Swiper('.swiper-container', { 
@@ -191,10 +195,64 @@ var CoreMobCamera = (function() {
 	}
     
 	function createGallery() {
-		CoreMobCameraiDB.openDB();
+		CoreMobCameraiDB.openDB(CoreMobCamera.renderPhotos);
 		displayThumbnails();
 		scrollInfinitely();		
 	}
+	
+	// Call back after iDB success
+	function renderPhotos(arr) {
+    	if (arr instanceof Array && arr.length == 0) {
+	    	var welcome = document.createElement('p');
+	    	welcome.className = 'thumb welcome';
+	    	welcome.textContent = 'Welcome to CoreMob Camera!';
+	    	document.getElementById('messages').appendChild(welcome);
+	    	return;
+    	}
+    	
+    	var wrapper = document.querySelector('.thumbnail-wrapper');
+    	
+    	var thumb = function(title, imgUrl, index) {
+	    	var el = document.createElement('figure');
+	    	el.className = 'thumb';
+	    	el.dataset.index = index;
+	    	el.style.backgroundImage = 'url('+imgUrl+')';
+	    	
+	    	var cap = document.createElement('figcaption');
+	    	cap.textContent = title;
+	    	el.appendChild(cap);
+	    	
+	    	setTimeout(function(){
+				window.URL.revokeObjectURL(imgUrl);
+			}, 100)
+			
+	    	return el;
+    	};
+ 
+	    if(arr instanceof Array) {
+	    	var i, idx;
+	    	numPhotosSaved = i = idx = arr.length;
+	    
+		    console.log('rendering ' + i + ' photos');
+	    
+		    while (i = arr.pop()) {
+		    	idx--;
+		    	if(i.blob) { // the blob in the array is just its obj url, not actual blob
+		    		var imgUrl = i.blob;
+			    	var el = thumb(i.title, imgUrl, idx);
+			    	wrapper.appendChild(el);
+		    	}
+			}
+
+	    } else { // When a new photo is added
+		    if(arr.blob) {
+			    var imgUrl = arr.blob;
+		    	console.log('Added: ' + imgUrl);
+			    var el = thumb(arr.title, imgUrl, numPhotosSaved-1);
+			    wrapper.insertBefore(el, wrapper.firstChild);
+		    }
+	    }
+    }
 
 	function displayThumbnails(resizeScreen) {	
 		var eachWidth = 105, // css .thumb
@@ -386,6 +444,8 @@ var CoreMobCamera = (function() {
 		error.textContent = 'The upload has been canceled by the user or the connection has been dropped.';
 		error.removeAttribute('hidden');
 	}
+	
+	
 }());
 
  

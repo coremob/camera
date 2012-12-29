@@ -2,7 +2,7 @@ var CoreMobCameraiDB = (function(){
 
 	var db;
 	var objStoreName = 'photo';
-	var numPhotosSaved = 0;
+	var renderPhotos;
 	
 	// Supported without prefix: IE10
 	// Supported with Prefix: Chrome, Blackberry10 and Firefox Mobile 15
@@ -27,13 +27,15 @@ var CoreMobCameraiDB = (function(){
 		req.onsuccess = function(){alert('Indexed DB is deleted')}
 	}
 	
-    function openDB() {
+    function openDB(callback) {
     	if(typeof window.indexedDB === 'undefined') {
         	// unsupported. do something
         	alert('IndexedDB is not supported on your browser!');
         	return;
         }
-
+        
+        renderPhotos = callback;
+        
         var req = window.indexedDB.open('gallery', 1); // IE10 doesn't like variables as db names & ver
       
         req.onsuccess = function(e) {
@@ -96,13 +98,15 @@ var CoreMobCameraiDB = (function(){
 		        photos.push(item);
 		        cursor.continue();
 		    } else {
-            	renderPhotos(photos);
+            	renderPhotos.call(this, photos);
 	        }
         }
         cursorReq.onerror = dbFailureHandler;
     }
     
-    function putPhotoInDB(data) {
+    function putPhotoInDB(data, callback) {
+    	renderPhotos = callback;
+    	
     	// 1. data.title 2. data.filePath or data.base64
     	if(data.filePath) {
     		getBlobFromFilePath(data);
@@ -153,71 +157,14 @@ var CoreMobCameraiDB = (function(){
 
         	var imgUrl = window.URL.createObjectURL(data.blob);
         	
-        	renderPhotos({
+        	renderPhotos.call(this, {
 	        	title: data.title,
-	        	id: data.id,
 	        	blob: imgUrl
         	});
         };
         req.onfailure = function(e) {
         	console.log(e);
         };
-    }
-    
-
-    function renderPhotos(arr) {
-    	if (arr instanceof Array && arr.length == 0) {
-	    	var welcome = document.createElement('p');
-	    	welcome.className = 'thumb welcome';
-	    	welcome.textContent = 'Welcome to CoreMob Camera!';
-	    	document.getElementById('messages').appendChild(welcome);
-	    	return;
-    	}
-    	
-    	var wrapper = document.querySelector('.thumbnail-wrapper');
-    	
-    	var thumb = function(id, title, imgUrl, index) {
-	    	var el = document.createElement('figure');
-	    	el.className = 'thumb s'+index;
-	    	el.dataset.id = id;
-	    	el.style.backgroundImage = 'url('+imgUrl+')';
-	    	
-	    	var cap = document.createElement('figcaption');
-	    	cap.textContent = title;
-	    	el.appendChild(cap);
-	    	
-	    	setTimeout(function(){
-				window.URL.revokeObjectURL(imgUrl);
-			}, 100)
-			
-	    	return el;
-    	};
- 
-	    if(arr instanceof Array) {
-	    	var i, idx;
-	    	numPhotosSaved = i = idx = arr.length;
-	    
-		    console.log('rendering ' + i + ' photos');
-	    
-		    while (i = arr.pop()) {
-		    	idx--;
-		    	if(i.blob) { // the blob in the array is just its obj url, not actual blob
-		    		var imgUrl = i.blob;
-			    	var el = thumb(i.id, i.title, imgUrl, idx);
-			    	wrapper.appendChild(el);
-		    	}
-			}
-
-	    } else { // When a new photo is added
-		    if(arr.blob) {
-			    var imgUrl = arr.blob;
-		    	console.log('Added: ' + arr.id+ ' ' + imgUrl);
-			    var el = thumb(arr.id, arr.title, imgUrl, numPhotosSaved);
-			    wrapper.insertBefore(el, wrapper.firstChild);
-			    numPhotosSaved++;
-			    console.log(numPhotosSaved);
-		    }
-	    }
     }
     
 })();
