@@ -2,6 +2,7 @@ var CoreMobCameraiDB = (function(){
 
 	var db;
 	var objStoreName = 'photo';
+	var renderPhotosFunc;
 	
 	// Supported without prefix: IE10
 	// Supported with Prefix: Chrome, Blackberry10 and Firefox Mobile 15
@@ -26,13 +27,16 @@ var CoreMobCameraiDB = (function(){
 		req.onsuccess = function(){alert('Indexed DB is deleted')}
 	}
 	
-    function openDB() {
+    function openDB(renderCallback, failCallback) {
     	if(typeof window.indexedDB === 'undefined') {
         	// unsupported. do something
-        	alert('IndexedDB is not supported on your browser!');
+        	failCallback.call(this);
         	return;
         }
-
+        
+        renderPhotosFunc = renderCallback;
+        showNonSupportUIFunc = failCallback;
+        
         var req = window.indexedDB.open('gallery', 1); // IE10 doesn't like variables as db names & ver
       
         req.onsuccess = function(e) {
@@ -47,11 +51,8 @@ var CoreMobCameraiDB = (function(){
 		            
 		            setVersionReq.onsuccess = function(e) {
 		                createObjStore(db);
-		                getPhotoFromDB();
 		            };
 		            setVersionReq.onfailure = dbFailureHandler;
-		        } else {
-			        getPhotoFromDB();
 		        }
         	}
 
@@ -84,7 +85,7 @@ var CoreMobCameraiDB = (function(){
         var cursorReq = objStore.openCursor();
         
         var photos = [];
-      
+  
         cursorReq.onsuccess = function(e) {
         	
         	var cursor = e.target.result;
@@ -97,20 +98,16 @@ var CoreMobCameraiDB = (function(){
 		        } 
 		        photos.push(item);
 		        cursor.continue();
-          } else {
-              if(photos.length > 0) { // done getting all data
-	          	renderPhotos(photos, true);
-	          } else {
-	          	//no data -- I need some "welcome" UI for the first run here
-	          	document.querySelector('.welcomeMessage').removeAttribute('hidden');
-	          }
-          }
-      };
-      
+		    } else {
+            	renderPhotosFunc.call(this, photos);
+	        }
+        }
         cursorReq.onerror = dbFailureHandler;
     }
     
-    function putPhotoInDB(data) {
+    function putPhotoInDB(data, renderCallback) {
+    	renderPhotosFunc = renderCallback;
+    	
     	// 1. data.title 2. data.filePath or data.base64
     	if(data.filePath) {
     		getBlobFromFilePath(data);
@@ -161,7 +158,7 @@ var CoreMobCameraiDB = (function(){
 
         	var imgUrl = window.URL.createObjectURL(data.blob);
         	
-        	renderPhotos({
+        	renderPhotosFunc.call(this, {
 	        	title: data.title,
 	        	blob: imgUrl
         	});
@@ -171,49 +168,4 @@ var CoreMobCameraiDB = (function(){
         };
     }
     
-
-    function renderPhotos(arr) {
-    	
-    	var wrapper = document.querySelector('.thumbnail-wrapper');
-    	
-    	var thumb = function(imgUrl) {
-	    	var el = document.createElement('div');
-	    	el.className = 'thumb';
-	    	el.style.backgroundImage = 'url('+imgUrl+')';
-	    	
-	    	setTimeout(function(){
-				window.URL.revokeObjectURL(imgUrl);
-			}, 100)
-			
-	    	return el;
-    	};
- 
-	    if(arr instanceof Array) {
-	    	var i = arr.length;
-		    console.log('rendering ' + i + ' photos');
-	    
-		    while (i = arr.pop()) {
-		    	if(i.blob) { // the blob in the array is just its obj url, not actual blob
-		    		var imgUrl = i.blob;
-		    		console.log(i.id+ ': ' +imgUrl);
-			    	var el = thumb(imgUrl);
-			    	wrapper.appendChild(el);
-		    	}
-			}
-	    } else { // only the lat photo
-		    if(arr.blob) {
-			    var imgUrl = arr.blob;
-		    	console.log('Added: ' +imgUrl);
-			    var el = thumb(imgUrl);
-			    wrapper.insertBefore(el, wrapper.firstChild);
-		    }
-	    }
-    }
-    
 })();
-//https://hacks.mozilla.org/2012/02/storing-images-and-files-in-indexeddb/
-// http://www.html5rocks.com/en/tutorials/indexeddb/todo/
-// https://developer.mozilla.org/en-US/docs/IndexedDB/Using_IndexedDB#Using_a_cursor
-// http://caniuse.com/indexeddb
-
-// http://www.w3.org/TR/XMLHttpRequest2/#the-response-attribute
