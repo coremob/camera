@@ -1,0 +1,345 @@
+/* Reset */
+html {
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%; 
+    -ms-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+html,
+body {
+	height: 100%;
+}
+body, 
+form {
+    margin: 0;
+    font: 1.2em/1.3em 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Roboto-Light', 'Roboto Light', 'Roboto', 'Segoe UI Web Light', 'Segoe UI Light', 'Segoe UI Web Regular', 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+img {
+	border: 0;
+}
+
+/* Base Styles */
+* {
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+}
+body {   
+    background: #453c34;
+    color: #cacaca;
+    padding: 0;
+}
+header {
+    text-align: center;
+}
+header h1 {
+    font-size: 2em;
+    font-weight: normal;
+    line-height: 50px;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.2), -1px -1px 0 rgba(0, 0, 0, 0.75);
+    color: rgba(20,19,21,0.8); 
+    margin: 0;
+    padding: 0 1em;
+}
+p {
+	text-shadow: 0 -1px 2px #000;
+}
+nav {
+	position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    
+    background: -webkit-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
+    background: -moz-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
+    background: -ms-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
+    background: -o-linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
+    background: linear-gradient(top, rgba(0,0,0,0.9) 10%,rgba(0,0,0,0.5) 100%);
+}
+footer {
+    padding: 3em 1em 1em;
+    font-size: 0.75em;
+    text-align: right;
+}
+*[hidden] { /* required for the browsers lacking the 'hidden' attribute support. IE10 */
+	display: none;
+}
+
+
+/* Main Pane */
+
+#messages {
+	margin: 0 1em;
+}
+
+#main {
+    
+}
+
+#main nav {
+	height: 50px;
+}
+#main nav ul {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	display: table;
+}
+#main nav li {
+	list-style: none;
+	display: table-cell;
+	text-align: center;
+	line-height: 40px;
+	border-top: 1px solid #111;
+}
+#main nav li a {
+	display: block;
+}
+#main nav li img {
+	display: inline-block;
+	width: 45px;
+	height: 45px;
+	position: relative;
+	top: 20px;
+}
+li.camera {
+	height: 110px;
+	width: 110px;
+	border-radius: 50%;
+	background: #221f1c;
+	border: 1px solid #111;
+    box-shadow: 2px -1px 2px rgba(0,0,0,0.25);
+    
+    position: relative;
+    top: -25px;
+}
+#main nav li.camera:hover { /* :active doesn't work on android/chrome */
+	background: #0ab;
+}
+#filePickerContainer {
+    text-align: center;
+}
+
+/* Form Elements */
+
+label {
+    font-size: 1.2em;
+    padding-bottom: .5em;
+    display: block;
+}
+input,
+textarea,
+select,
+button {
+    display: inline-block;
+    font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, sans-serif;
+    font-size: 20px;
+}
+button,
+input[type="button"] {
+    padding: 8px 24px;
+    margin-right: 10px;
+    border-radius: 6px;
+    vertical-align: middle;    
+    color: #fff;
+    text-shadow: 1px 0 0 #333;
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    background-color: #ff349a;
+}
+button:disabled,
+input:disabled {
+	opacity: .5;
+}
+button:enabled:active,
+input[type="button"]:enabled:active {
+    box-shadow: inset 0 4px 4px rgba(0,0,0,0.25);
+    outline: 0;
+}
+button.dismiss,
+input[type="button"].dismiss {
+    color: #fff;
+    text-shadow: 1px 0 0 #333;
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    background-color: #faa;
+}
+
+.save-button,
+.upload-button {
+    display: inline-block;
+    margin: 0.5em;
+}
+
+/* Photo */
+
+#photoResultContainer {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+#resultPhoto, #croppedPhoto, #filteredPhoto {
+    width: 100%;
+    height: auto; /* IE10 does not like this! */
+}
+h2.label {
+    color: #333;
+    font-weight: normal;
+}
+#fileinfo {
+    color: #fff;
+    font-size: 0.7em;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.75);
+    
+    width: 100%;
+    position: fixed;
+	bottom: 0;
+}
+.action-buttons {
+	text-align: center;
+	margin: 1em auto;
+}
+.loader {
+    width: 200px;
+    height: 200px;
+    line-height: 200px;
+    background: rgba(0,0,0,0.5);
+    text-align: center;
+    color: #fff;
+    border-radius: 12px;
+    position: fixed;
+    left: 50%;
+    margin-left: -100px;
+    top: 50%;
+    margin-top: -100px;
+    
+}
+.errorMessage {
+    color: #f00;
+    margin: 0 1em 1em;
+}
+.evroneCropCanvas {
+    cursor: move;
+}
+
+/* Gallery Thumbnails */
+
+figure {
+	margin: 0;
+	padding: 0;
+}
+#thumbnails {
+	margin: 0 auto;
+	font-size: 0; line-height: 0;
+}
+#thumbnails .thumbnail-wrapper {
+	margin-left: -2px; /* adjust for the left column thumb */
+}
+#thumbnails figure {
+	display: inline-block;
+	width: 100px;
+	height: 100px;
+	margin: 0 0 5px 5px;
+	background-repeat: no-repeat;
+	background-position: left top;
+	background-size: cover;
+	box-shadow: inset 0 0 6px #000;
+	cursor: pointer;
+}
+#thumbnails figcaption {
+	display: none;
+}
+
+/*
+.thumb:first-of-type {
+	margin-left: 0;
+}
+*/
+
+/* Gallery Single View */
+
+#thumbSingleView {
+	text-align: center;
+}
+#thumbSingleView figure {
+	background-repeat: no-repeat;
+	background-position: left top;
+	background-size: 100% auto;
+}
+#thumbSingleView figcaption {
+	padding-top: 100%;
+	padding-top: -webkit-calc(100% + 10px);
+	padding-top: -moz-calc(100% + 10px);
+	padding-top: calc(100% + 10px);
+	text-align: left;
+}
+.pagination {
+	margin: 1em auto;
+}
+
+/* Filter Effects */
+
+#filterDrawer nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+#filterButtons {
+    text-align: center;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding: 0 .5em;
+}
+.filter {
+    display: inline-block;
+    margin: 3px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px #000;
+    height: 72px;
+    width: 72px;
+    cursor: pointer;
+    background: url("../images/effects-thumbs.png") no-repeat 0 0;
+    background-size: cover;
+}
+.filter:hover {
+	box-shadow: 0 0 12px #f08;
+}
+.filter:first-of-type {
+    background-position: 0 0;    
+}
+.filter:nth-of-type(2) {
+    background-position: -73px 0;
+}
+.filter:nth-of-type(3) {
+    background-position: -146px 0; 
+}
+.filter:nth-of-type(4) {
+    background-position: -219px 0; 
+}
+.filter:nth-of-type(5) {
+    background-position: -292px 0;
+}
+.filter:nth-of-type(6) {
+    background-position: -365px 0;
+}
+.filter:nth-of-type(7) {
+    background-position: -438px 0;
+}
+.filter:nth-of-type(8) {
+    background-position: -511px 0;
+}
+.filter:nth-of-type(9) {
+    background-position: -584px 0;
+}
+
+.filter-tag {
+    color: #fff;
+    font-size: .8em;
+    text-shadow: 1px 1px 1px #000;
+    text-align: center;
+    padding-top: 58px;
+}
