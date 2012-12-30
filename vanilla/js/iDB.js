@@ -2,7 +2,7 @@ var CoreMobCameraiDB = (function(){
 
 	var db;
 	var objStoreName = 'photo';
-	var renderPhotos;
+	var renderPhotosFunc;
 	
 	// Supported without prefix: IE10
 	// Supported with Prefix: Chrome, Blackberry10 and Firefox Mobile 15
@@ -27,14 +27,15 @@ var CoreMobCameraiDB = (function(){
 		req.onsuccess = function(){alert('Indexed DB is deleted')}
 	}
 	
-    function openDB(callback) {
+    function openDB(renderCallback, failCallback) {
     	if(typeof window.indexedDB === 'undefined') {
         	// unsupported. do something
-        	alert('IndexedDB is not supported on your browser!');
+        	failCallback.call(this);
         	return;
         }
         
-        renderPhotos = callback;
+        renderPhotosFunc = renderCallback;
+        showNonSupportUIFunc = failCallback;
         
         var req = window.indexedDB.open('gallery', 1); // IE10 doesn't like variables as db names & ver
       
@@ -98,14 +99,14 @@ var CoreMobCameraiDB = (function(){
 		        photos.push(item);
 		        cursor.continue();
 		    } else {
-            	renderPhotos.call(this, photos);
+            	renderPhotosFunc.call(this, photos);
 	        }
         }
         cursorReq.onerror = dbFailureHandler;
     }
     
-    function putPhotoInDB(data, callback) {
-    	renderPhotos = callback;
+    function putPhotoInDB(data, renderCallback) {
+    	renderPhotosFunc = renderCallback;
     	
     	// 1. data.title 2. data.filePath or data.base64
     	if(data.filePath) {
@@ -157,7 +158,7 @@ var CoreMobCameraiDB = (function(){
 
         	var imgUrl = window.URL.createObjectURL(data.blob);
         	
-        	renderPhotos.call(this, {
+        	renderPhotosFunc.call(this, {
 	        	title: data.title,
 	        	blob: imgUrl
         	});

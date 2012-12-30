@@ -21,7 +21,8 @@ var CoreMobCamera = (function() {
 	
 	return {
 		init: init,
-		renderPhotos: renderPhotos
+		renderPhotos: renderPhotos,
+		onDbFailure: onDbFailure
 	};
 	
 	function init() {
@@ -40,10 +41,7 @@ var CoreMobCamera = (function() {
 		sectionPhotoEffect.setAttribute('hidden', 'hidden');
 		sectionFilterDrawer.setAttribute('hidden', 'hidden');
 		
-		//var cn = '.thumb.s'+numPhotosSaved;
-		var q = '[data-index=' + numPhotosSaved + ']'
-		console.log(q);
-
+		var q = '[data-index="' + numPhotosSaved + '"]';
 		
 		(function() {
 			if(document.querySelector(q)) {
@@ -66,6 +64,12 @@ var CoreMobCamera = (function() {
 		}
 	}
 	
+	// iDB Not Supported
+	function onDbFailure() {
+        alert('IndexedDB is not supported on your browser!');
+        document.getElementById('saveButton').setAttribute('hidden', 'hidden');
+    }
+       
 	function bindEvents() {
 		// Screen orientation/size change
 		var orientationEvent = ('onorientationchange' in window) ? 'orientationchange' : 'resize';
@@ -195,7 +199,7 @@ var CoreMobCamera = (function() {
 	}
     
 	function createGallery() {
-		CoreMobCameraiDB.openDB(CoreMobCamera.renderPhotos);
+		CoreMobCameraiDB.openDB(CoreMobCamera.renderPhotos, CoreMobCamera.onDbFailure);
 		displayThumbnails();
 		scrollInfinitely();		
 	}
@@ -444,7 +448,6 @@ var CoreMobCamera = (function() {
 		error.textContent = 'The upload has been canceled by the user or the connection has been dropped.';
 		error.removeAttribute('hidden');
 	}
-	
 	
 }());
 
