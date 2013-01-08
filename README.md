@@ -45,7 +45,7 @@ Picture gallery
 
 This view is the app's entry point. It displays all previously taken pictures in the form of an in-app scrollable gallery and offers a button to launch the [native camera](#native-camera-view). The button itself triggers a hidden (offscreen) `input[type=file][capture=camera]` element.
 
-The gallery will be implemented as a infinite scroll component, pulling the pictures out of [IndexedDB][INDEXEDDB] on demand as notably [described and implemented](http://engineering.linkedin.com/linkedin-ipad-5-techniques-smooth-infinite-scrolling-html5) by Linkedin. This will be either handed-coded or will rely on an open-source library (e.g. [Airbnb Infinity](https://github.com/airbnb/infinity). It will enable stress-tesing scrolling performance and stuttering.
+The gallery will be implemented as a infinite scroll component, pulling the pictures out of [IndexedDB][INDEXEDDB] on demand as notably [described and implemented](http://engineering.linkedin.com/linkedin-ipad-5-techniques-smooth-infinite-scrolling-html5) by Linkedin. This will be either handed-coded or will rely on an open-source library (e.g. [Airbnb Infinity](https://github.com/airbnb/infinity). It will enable stress-testing scrolling performance and stuttering.
 
 This view will also enable selecting a number of pictures together (e.g. to upload to a remote servers, share, etc.) and switching to [single picture view mode](#single-picture-view).
 
