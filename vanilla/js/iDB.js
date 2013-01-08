@@ -3,7 +3,7 @@ var CoreMobCameraiDB = (function(){
 	var db;
 	
 	// Supported without prefix: IE10
-	// Supported with Prefix: Chrome, Blackberry10 and Firefox Mobile 15
+	// Supported with Prefix: Chrome, BlackBerry10 and Firefox Mobile 15
 	// Unsupported: Opera Mobile, iOS6 Safari 
 	
     window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
