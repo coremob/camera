@@ -372,10 +372,10 @@ Swiper = function(selector, params, callback) {
 	wrapper.addEventListener(_this.touchEvents.touchStart, onTouchStart, false);
 	
 	//Mouse 'mousemove' and 'mouseup' events should be assigned to document
-	var lestenEl = (_this.support.touch) ? wrapper : document
+	var listenEl = (_this.support.touch) ? wrapper : document
 
-	lestenEl.addEventListener(_this.touchEvents.touchMove, onTouchMove, false);
-	lestenEl.addEventListener(_this.touchEvents.touchEnd, onTouchEnd, false);
+	listenEl.addEventListener(_this.touchEvents.touchMove, onTouchMove, false);
+	listenEl.addEventListener(_this.touchEvents.touchEnd, onTouchEnd, false);
 	
 	//Remove Events
 	_this.destroy = function(removeResizeFix){
@@ -384,8 +384,8 @@ Swiper = function(selector, params, callback) {
 			window.removeEventListener(_this.resizeEvent, _this.resizeFix, false);
 		}
 		wrapper.removeEventListener(_this.touchEvents.touchStart, onTouchStart, true);
-		lestenEl.removeEventListener(_this.touchEvents.touchMove, onTouchMove, true);
-		lestenEl.removeEventListener(_this.touchEvents.touchEnd, onTouchEnd, true);
+		listenEl.removeEventListener(_this.touchEvents.touchMove, onTouchMove, true);
+		listenEl.removeEventListener(_this.touchEvents.touchEnd, onTouchEnd, true);
 		_this.callPlugins('onDestroy');
 	}
 	/*=========================
