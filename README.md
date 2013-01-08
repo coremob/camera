@@ -33,7 +33,7 @@ Views
 The application's user interface consists of three main views:
 
 * the [picture gallery](#picture-gallery) from which the user will be able to activate the [native camera view](#native-camera-view),
-* the [native camera view](#native-camera-view) itslef, which is the native camera application of the device, launched through the [HTML Media Capture API][HTMLMEDIACAPTURE], and
+* the [native camera view](#native-camera-view) itself, which is the native camera application of the device, launched through the [HTML Media Capture API][HTMLMEDIACAPTURE], and
 * the [single picture view](#single-picture-view) which will notably allow applying filters.
 
 The application will have a limited number of secondary views, e.g. for application settings.
