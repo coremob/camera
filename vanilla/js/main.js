@@ -74,8 +74,8 @@ var CoreMobCamera = (function() {
 	
     function renderFirstRun() {
 	    showUI(firstRun);
-	    var arrowHight = window.innerHeight * .5;
-		document.getElementsByClassName('arrow-container')[0].style.height = arrowHight + 'px';
+	    var arrowHeight = window.innerHeight * .5;
+		document.getElementsByClassName('arrow-container')[0].style.height = arrowHeight + 'px';
     }
        
 	function bindEvents() {
