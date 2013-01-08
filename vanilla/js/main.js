@@ -107,7 +107,7 @@ var CoreMobCamera = (function() {
 		// View a photo in carousel
 		document.getElementById('thumbnails').addEventListener('click', viewSinglePhoto, false);
 		
-		// Temp - remove later and use the history api for the back button nav
+		// Temp - remove later and use the history API for the back button nav
 		document.getElementById('dismissSingleView').addEventListener('click', function(e){
 			showUI(sectionMain);
 			hideUI(sectionSingleView);
