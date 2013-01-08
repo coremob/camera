@@ -55,7 +55,7 @@ var CoreMobCameraiDB = (function(){
         	db = e.target.result;
         	console.log(db);
         	
-        	// For Chrome < 23 (incl. mobile. v18) -- newer Chrome & FF deprecated it and use onupgradeneeded event
+        	// For Chrome < 23 (including mobile. v18) -- newer Chrome & FF deprecated it and use onupgradeneeded event
         	if(typeof db.setVersion !== 'undefined') {
         		console.log('using the deprecated setVersion');
 	        	if(db.version != 1) {
