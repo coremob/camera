@@ -117,7 +117,7 @@ var CoreMobCamera = (function() {
 		document.getElementById('cropCancel').addEventListener('click', cancelCrop, false);
 		document.getElementById('cropApply').addEventListener('click', applyCrop, false);	
 		
-		// Uploading a photo -- not inplemented yet
+		// Uploading a photo -- not implemented yet
 		document.getElementById('uploadButton').addEventListener('click', function(){
 			//showUI(loader);
 			//startUpload();
