@@ -74,8 +74,8 @@ var CoreMobCamera = (function() {
 	
     function renderFirstRun() {
 	    showUI(firstRun);
-	    var arrowHight = window.innerHeight * .5;
-		document.getElementsByClassName('arrow-container')[0].style.height = arrowHight + 'px';
+	    var arrowHeight = window.innerHeight * .5;
+		document.getElementsByClassName('arrow-container')[0].style.height = arrowHeight + 'px';
     }
        
 	function bindEvents() {
@@ -107,7 +107,7 @@ var CoreMobCamera = (function() {
 		// View a photo in carousel
 		document.getElementById('thumbnails').addEventListener('click', viewSinglePhoto, false);
 		
-		// Temp - remove later and use the history api for the back button nav
+		// Temp - remove later and use the history API for the back button nav
 		document.getElementById('dismissSingleView').addEventListener('click', function(e){
 			showUI(sectionMain);
 			hideUI(sectionSingleView);
@@ -117,7 +117,7 @@ var CoreMobCamera = (function() {
 		document.getElementById('cropCancel').addEventListener('click', cancelCrop, false);
 		document.getElementById('cropApply').addEventListener('click', applyCrop, false);	
 		
-		// Uploading a photo -- not inplemented yet
+		// Uploading a photo -- not implemented yet
 		document.getElementById('uploadButton').addEventListener('click', function(){
 			//showUI(loader);
 			//startUpload();
@@ -393,9 +393,9 @@ var CoreMobCamera = (function() {
 	function fileSelected(capture) {
 		
 	    var localFile = document.getElementById(capture).files[0],
-	    	imgFmt = /^(image\/bmp|image\/gif|image\/jpeg|image\/png)$/i;
+	    	imgFormat = /^(image\/bmp|image\/gif|image\/jpeg|image\/png)$/i;
 	    	
-	    if (! imgFmt.test(localFile.type)) {
+	    if (! imgFormat.test(localFile.type)) {
 	        alert('The image format, ' + localFile.type + ' is not supported.');
 			hideUI(loader);
 	        return;

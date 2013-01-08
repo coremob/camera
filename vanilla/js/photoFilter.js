@@ -1,6 +1,6 @@
 /*
 	Simple Photo Filters using Canvas
-	Referece: html5rocks.com/en/tutorials/canvas/imagefilters/
+	Reference: html5rocks.com/en/tutorials/canvas/imagefilters/
 */
 
 var PhotoFilter = function(imgObj) {
@@ -18,7 +18,7 @@ var PhotoFilter = function(imgObj) {
     var naturalImage = new Image();
     	naturalImage.src = this.imgObj.getAttribute('src');
     	
-    	// Get natural image dimension, rather than the displayed dimention.
+    	// Get natural image dimension, rather than the displayed dimension.
         this.c.width = naturalImage.width;
         this.c.height = naturalImage.height;
         
@@ -113,7 +113,7 @@ PhotoFilter.prototype = {
 		var output = PhotoFilter.prototype.createImageData(w, h);
 		var dst = output.data;
 		
-		var alphaFac = opaque ? 1 : 0;
+		var alphaFactor = opaque ? 1 : 0;
 		
 		for (var y=0; y<h; y++) {
 			for (var x=0; x<w; x++) {
@@ -136,7 +136,7 @@ PhotoFilter.prototype = {
 			 dst[dstOff] = r;
 			 dst[dstOff+1] = g;
 			 dst[dstOff+2] = b;
-			 dst[dstOff+3] = a + alphaFac*(255-a);
+			 dst[dstOff+3] = a + alphaFactor*(255-a);
 			 }
 		}
 		return output;

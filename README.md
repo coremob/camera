@@ -33,7 +33,7 @@ Views
 The application's user interface consists of three main views:
 
 * the [picture gallery](#picture-gallery) from which the user will be able to activate the [native camera view](#native-camera-view),
-* the [native camera view](#native-camera-view) itslef, which is the native camera application of the device, launched through the [HTML Media Capture API][HTMLMEDIACAPTURE], and
+* the [native camera view](#native-camera-view) itself, which is the native camera application of the device, launched through the [HTML Media Capture API][HTMLMEDIACAPTURE], and
 * the [single picture view](#single-picture-view) which will notably allow applying filters.
 
 The application will have a limited number of secondary views, e.g. for application settings.
@@ -45,7 +45,7 @@ Picture gallery
 
 This view is the app's entry point. It displays all previously taken pictures in the form of an in-app scrollable gallery and offers a button to launch the [native camera](#native-camera-view). The button itself triggers a hidden (offscreen) `input[type=file][capture=camera]` element.
 
-The gallery will be implemented as a infinite scroll component, pulling the pictures out of [IndexedDB][INDEXEDDB] on demand as notably [described and implemented](http://engineering.linkedin.com/linkedin-ipad-5-techniques-smooth-infinite-scrolling-html5) by Linkedin. This will be either handed-coded or will rely on an open-source library (e.g. [Airbnb Infinity](https://github.com/airbnb/infinity). It will enable stress-tesing scrolling performance and stuttering.
+The gallery will be implemented as a infinite scroll component, pulling the pictures out of [IndexedDB][INDEXEDDB] on demand as notably [described and implemented](http://engineering.linkedin.com/linkedin-ipad-5-techniques-smooth-infinite-scrolling-html5) by Linkedin. This will be either handed-coded or will rely on an open-source library (e.g. [Airbnb Infinity](https://github.com/airbnb/infinity). It will enable stress-testing scrolling performance and stuttering.
 
 This view will also enable selecting a number of pictures together (e.g. to upload to a remote servers, share, etc.) and switching to [single picture view mode](#single-picture-view).
 
