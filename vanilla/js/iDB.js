@@ -44,7 +44,7 @@ var CoreMobCameraiDB = (function(){
         }
         
         if(window.indexedDB === null) {
-        	// possibly runnig the app from local file on older Firefox
+        	// possibly running the app from local file on older Firefox
         	alert('IndexedDB cannot run locally on some browsers. Try running this app from a server.')
         	return;
         }
