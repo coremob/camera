@@ -1,6 +1,6 @@
 /*
 	Simple Photo Filters using Canvas
-	Referece: html5rocks.com/en/tutorials/canvas/imagefilters/
+	Reference: html5rocks.com/en/tutorials/canvas/imagefilters/
 */
 
 var PhotoFilter = function(imgObj) {
