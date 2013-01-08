@@ -18,7 +18,7 @@ var PhotoFilter = function(imgObj) {
     var naturalImage = new Image();
     	naturalImage.src = this.imgObj.getAttribute('src');
     	
-    	// Get natural image dimension, rather than the displayed dimention.
+    	// Get natural image dimension, rather than the displayed dimension.
         this.c.width = naturalImage.width;
         this.c.height = naturalImage.height;
         
