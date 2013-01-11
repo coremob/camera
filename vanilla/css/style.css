@@ -164,13 +164,6 @@ footer {
     position: relative;
     top: -25px;
 }
-.camera img {
-	display: inline-block;
-	width: 45px;
-	height: 45px;
-	position: relative;
-	top: 20px;
-}
 .camera:hover { /* :active doesn't work on android/chrome */
 	background: #0ab;
 }
@@ -195,7 +188,7 @@ textarea,
 select,
 button {
     display: inline-block;
-    font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, sans-serif;
+    font-family: inherit;
     font-size: 20px;
 }
 button,
@@ -225,11 +218,9 @@ input[type="button"].dismiss {
     border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
     background-color: #ff1f97;
 }
-
-.save-button,
-.upload-button {
-    display: inline-block;
-    margin: 0.5em;
+.action-buttons {
+	text-align: center;
+	margin: 1em auto;
 }
 
 /* Photo */
@@ -261,10 +252,6 @@ h2.label {
     font-size: 0.7em;
     text-shadow: 0 1px 1px rgba(0,0,0,0.75);
 	margin-left: .5em;
-}
-.action-buttons {
-	text-align: center;
-	margin: 1em auto;
 }
 #loader {
     width: 200px;
@@ -407,7 +394,7 @@ figure {
     padding-top: 58px;
 }
 
-/* Font Icons */
+/* Font Icons by IcoMoon.io */
 
 @font-face {
 	font-family: 'icons';
@@ -419,7 +406,7 @@ figure {
 	font-weight: normal;
 	font-style: normal;
 }
-[data-icon]:before {
+[data-icon]::before {
 	font-family: 'icons';
 	content: attr(data-icon);
 	speak: none;
@@ -428,34 +415,48 @@ figure {
 	padding-right: 0.5em;
 	-webkit-font-smoothing: antialiased;
 }
-.icon-camera:before {
+.camera::before {
+	color: #fff;
+	font-size: 45px;
+	position: relative;
+	top: 18px;
+	left: 12px;
+}
+.icon-x::before {
+	color: rgb(0, 0, 0, .75);
+	font-size: 28px;
+	position: absolute;
+	top: 5px;
+	right: 0; 
+}
+.icon-location::before {
 	color: #fff;
 }
-.icon-location:before {
+.icon-facebook::before {
 	color: #fff;
 }
-.icon-facebook:before {
-	color: #fff;
-}
-.icon-warning:before {
+.icon-warning::before {
 	color: #ffd900;
 	font-size: 42px;
 	text-shadow: 0px 1px 1px rgba(0, 0, 0, .6);
 	position: relative;
 	top: 4px;
 }
-.icon-warning.med-alert:before {
+.icon-warning.med-alert::before {
 	color: #ffa91f;
 }
-.icon-warning.high-alert:before {
+.icon-warning.high-alert::before {
 	color: #ff1f97;
 }
-.icon-download:before {
+.icon-save::before {
 	color: #fff;
 }
-.icon-share:before {
+.icon-upload::before {
 	color: #fff;
 }
-.icon-github:before {
+.icon-share::before {
+	color: #fff;
+}
+.icon-github::before {
 	color: #fff;
 }
