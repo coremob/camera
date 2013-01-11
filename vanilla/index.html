@@ -32,11 +32,12 @@
 		<!-- <p id="userAgent" style="font-size:.75rem;white-space: nowrap;"></p> -->
 		
 		<section id="warnings">
-			<div id="warningMediaCapture" class="icon-warning high-alert" aria-hidden="true" data-icon="&#xe001;" hidden><span>Your browser does not support <a href="http://www.w3.org/TR/html-media-capture/" target="_blank">HTML Media Capture</a>.</span></div>
-			<div id="warningIndexedDb" class="icon-warning med-alert" aria-hidden="true" data-icon="&#xe001;" hidden><span>Your browser does not support <a href="http://www.w3.org/TR/IndexedDB/" target="_blank">IndexedDB</a>.</span>
+			<div id="warningMediaCapture" class="icon-warning high-alert" aria-hidden="true" data-icon="&#x26a0;" hidden><span>Your browser does not support <a href="http://www.w3.org/TR/html-media-capture/" target="_blank">HTML Media Capture</a>.</span></div>
+			<div id="warningIndexedDb" class="icon-warning med-alert" aria-hidden="true" data-icon="&#x26a0;" hidden><span>Your browser does not support <a href="http://www.w3.org/TR/IndexedDB/" target="_blank">IndexedDB</a>.</span>
 			</div>
-			<div id="warningIndexedDbBlob" class="icon-warning" aria-hidden="true" data-icon="&#xe001;" hidden><span>Your browser can not store <strong>blob</strong> objects into <a href="http://www.w3.org/TR/IndexedDB/" target="_blank">IndexedDB</a>. Storing data URL strings instead.</span>
+			<div id="warningIndexedDbBlob" class="icon-warning" aria-hidden="true" data-icon="&#x26a0;" hidden><span>Your browser can not store <strong>blob</strong> objects into <a href="http://www.w3.org/TR/IndexedDB/" target="_blank">IndexedDB</a>. Storing data URL strings instead.</span>
 			</div>
+			<div id="warningHistory" class="icon-warning" aria-hidden="true" data-icon="&#x26a0;" hidden><span>Your browser does not support <a href="http://www.w3.org/TR/2011/WD-html5-20110113/history.html" target="_blank">History API</a>.</span></div>
 		</section>
 	
 		
@@ -53,10 +54,7 @@
 	    <p style="position:fixed; bottom:30px; right:0; ;cursor:pointer; color:#aaa;" id="clearDB">[Test] Delete DB</p>
 	    
 	    <nav>
-    		<!-- the camera icon is by icomoon.io -->
-    		<div class="camera">
-	    		<a onclick="document.getElementById('camera').click();return false;"><img src="images/camera.svg"></a>
-    		</div>
+    		<div class="camera" data-icon="&#x235f;" onclick="document.getElementById('camera').click();return false;"></div>
 
 	    	<form id="filePickerContainer" style="position:absolute;left: -999px">
 	            <label for="imagefile"></label>
@@ -68,7 +66,7 @@
 	
 	<!-- Gallery Carousel -->
 	<section id="thumbSingleView" hidden>
-		<div id="dismissSingleView">[X]</div>
+		<div id="dismissSingleView" class="icon-x" data-icon="&#x2297;"></div>
 		<div class="swiper-container"></div>
 		<div class="pagination"></div>
 	</section>
@@ -131,9 +129,9 @@
 			</section>
 			
 			<!-- File Save and Upload -->
-			<form id="uploadForm" enctype="multipart/form-data" method="post" action="/upload">
-				<input type="button" class="photo-button save-button" value="Save in DB" id="saveButton">
-				<input type="button" class="photo-button upload-button" value="Upload" id="uploadButton">
+			<form id="uploadForm" class="action-buttons" enctype="multipart/form-data" method="post" action="/upload">
+				<input type="button" value="Save in DB" id="saveButton">
+				<input type="button" value="Upload" id="uploadButton" data-icon=";">
 			</form>
 		</nav>
 	</section>

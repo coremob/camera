@@ -50,6 +50,7 @@ var CoreMobCamera = (function() {
 	}
 	
 	function reInit() {
+		hideUI(firstRun);
 		showUI(sectionMain);
 		hideUI(sectionPhotoEffect);
 		hideUI(sectionFilterDrawer);
@@ -66,9 +67,14 @@ var CoreMobCamera = (function() {
 	// I need to write another capability check besides this function
 	function checkMediaCaptureSupport() {
 		if(typeof window.FileReader === 'undefined') {
-			var warning = document.getElementById('warningMediaCapture');
-			showUI(warning);
+			showUI(document.getElementById('warningMediaCapture'));
 			document.querySelector('.camera').classList.add('no-support'); //disable the button
+		}
+	}
+	
+	function checkHistorySupport() {
+		if (typeof history.pushState === 'undefined') {
+			showUI(document.getElementById('warningHistory'));
 		}
 	}
 	
@@ -107,11 +113,25 @@ var CoreMobCamera = (function() {
 		// View a photo in carousel
 		document.getElementById('thumbnails').addEventListener('click', viewSinglePhoto, false);
 		
-		// Temp - remove later and use the history api for the back button nav
+		// Pop back to Main
+		window.addEventListener('popstate', function(e){
+			console.log(history.state);
+			if (history.state === null || history.state.stage == 'main') {
+				showUI(sectionMain);
+				hideUI(sectionSingleView);
+				history.replaceState({stage: 'main'}, null);
+			}
+		}, false);
+		
+		// popstate alternative
 		document.getElementById('dismissSingleView').addEventListener('click', function(e){
+			if (typeof history.pushState === 'function')	{
+				history.go(-1); // pop one state manially
+			}
 			showUI(sectionMain);
 			hideUI(sectionSingleView);
 		}, false);
+		
 		
 		// Photo Crop
 		document.getElementById('cropCancel').addEventListener('click', cancelCrop, false);
@@ -207,7 +227,8 @@ var CoreMobCamera = (function() {
 				pagination: '.pagination',
 				initialSlide: revIndex
 			});
-		
+			
+			history.pushState({stage: 'singleView'}, null, '#singleview');
 			showUI(sectionSingleView);
 			hideUI(sectionMain);
 		} 	
@@ -379,7 +400,7 @@ var CoreMobCamera = (function() {
 	    });
 	    
 	    imgCrop.displayResult();
-
+	    
 		hideUI(sectionMain);
 		showUI(sectionPhotoCrop);
 		
