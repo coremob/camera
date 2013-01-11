@@ -11,7 +11,9 @@ var CoreMobCameraiDB = (function(){
     
     // FF, IE10 and Chrome21+ use strings while older Chrome used constants
     window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
-    IDBTransaction.READ_WRITE = 'readwrite' || IDBTransaction.READ_WRITE;
+    if(window.IDBTransaction) {
+	    IDBTransaction.READ_WRITE = 'readwrite' || IDBTransaction.READ_WRITE;
+    }
     
     window.URL = window.URL || window.webkitURL;
 	
