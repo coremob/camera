@@ -9,8 +9,9 @@ var CoreMobCameraiDB = (function(){
     window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
     window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
     
-    // Chrome21+ and IE10 use strings instead of constants
-    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || {READ_WRITE: 'readwrite'};
+    // FF, IE10 and Chrome21+ use strings while older Chrome used constants
+    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+    IDBTransaction.READ_WRITE = 'readwrite' || IDBTransaction.READ_WRITE;
     
     window.URL = window.URL || window.webkitURL;
 	
@@ -134,7 +135,7 @@ var CoreMobCameraiDB = (function(){
     }
 
     function storeInDB(data, renderCallback, blobFailureCallback){
-	    var transaction = db.transaction(['photo'], IDBTransaction.READ_WRITE);	    
+	    var transaction = db.transaction(['photo'], window.IDBTransaction.READ_WRITE);	    
         var objStore = transaction.objectStore('photo');
                 
         var req;
