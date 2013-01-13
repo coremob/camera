@@ -46,6 +46,8 @@ header {
     background: linear-gradient(top, #ff1f97 10%, #c30f6c 100%);
     box-shadow: 0 5px 10px rgba(0, 0, 0, .25);
     margin-bottom: 1.5em;
+    height: 50px;
+    overflow: hidden;
 }
 header h1 {
     font-size: 1.5em;
@@ -56,8 +58,8 @@ header h1 {
     margin: 0;
     padding: 0 1em;
 }
-p {
-
+a {
+	text-decoration: none;
 }
 nav {
 	position: fixed;
@@ -118,7 +120,6 @@ footer {
 }
 #warnings a {
 	color: #ffd900;
-	text-decoration: none;
 }
 .icon-warning {
 	margin-bottom: 5px;
@@ -220,7 +221,7 @@ input[type="button"].dismiss {
 }
 .action-buttons {
 	text-align: center;
-	margin: 1em auto;
+	margin: .5em auto;
 }
 
 /* Photo */
@@ -229,15 +230,18 @@ input[type="button"].dismiss {
 	background-color: #342f2f;
 }
 
-#photoResultContainer {
+#userPhotoCrontainer, #photoResultContainer {
     overflow: hidden;
     width: 100%;
     height: 100%;
+    text-align: center;
 }
+
 #resultPhoto, #croppedPhoto, #filteredPhoto {
     width: 100%;
-    height: auto; /* IE10 does not like this! */
+    height: auto;
 }
+
 h2.label {
     color: #333;
     font-weight: normal;
@@ -268,9 +272,6 @@ h2.label {
     margin-top: -100px;
     z-index: 10;
 }
-.evroneCropCanvas {
-    cursor: move;
-}
 
 /* Gallery Thumbnails */
 
@@ -300,31 +301,49 @@ figure {
 	display: none;
 }
 
-/*
-.thumb:first-of-type {
-	margin-left: 0;
-}
-*/
-
 /* Gallery Single View */
 
-#thumbSingleView {
+#singleView header {
+	margin-bottom: 0;
+}
+
+#singleView nav {
+	position: relative;
+}
+#singleView nav a {
+	display: inline-block;
+	color: #fff;
+	position: absolute;
+	line-height: 58px;
+	font-size: 1.4em;
+}
+#singleView nav .back {
+	left: 10px;
+}
+#singleView nav .share {
+	right: 0;
+}
+#singleView {
 	text-align: center;
 }
-#thumbSingleView figure {
+#singleView figure {
 	background-repeat: no-repeat;
 	background-position: left top;
 	background-size: 100% auto;
 }
-#thumbSingleView figcaption {
+#singleView figcaption {
 	padding-top: 100%;
 	padding-top: -webkit-calc(100% + 10px);
 	padding-top: -moz-calc(100% + 10px);
 	padding-top: calc(100% + 10px);
 	text-align: left;
+	padding-left: .5em;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 .pagination {
-	margin: 1em auto;
+	margin: .5em auto 1em;
 }
 
 /* Filter Effects */
@@ -422,13 +441,6 @@ figure {
 	top: 18px;
 	left: 12px;
 }
-.icon-x::before {
-	color: rgb(0, 0, 0, .75);
-	font-size: 28px;
-	position: absolute;
-	top: 5px;
-	right: 0; 
-}
 .icon-location::before {
 	color: #fff;
 }
@@ -447,16 +459,4 @@ figure {
 }
 .icon-warning.high-alert::before {
 	color: #ff1f97;
-}
-.icon-save::before {
-	color: #fff;
-}
-.icon-upload::before {
-	color: #fff;
-}
-.icon-share::before {
-	color: #fff;
-}
-.icon-github::before {
-	color: #fff;
 }

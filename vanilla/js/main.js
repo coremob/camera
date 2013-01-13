@@ -12,6 +12,8 @@ var CoreMobCamera = (function() {
 	var maxFilesize = 1048576 * 3.5; // Max image size is 3.5MB (iPhone5, Galaxy SIII, Lumia920 < 3MB)
 	var numPhotosSaved = 0;
 	var imgCrop;
+	var finalPhotoDimension = 612;
+	var viewWidth;
 	var isBlobSupported = true;
 	
 	// UI
@@ -23,7 +25,7 @@ var CoreMobCamera = (function() {
 		sectionPhotoEffect = document.getElementById('photoEffect'),
 		sectionFilterDrawer = document.getElementById('filterDrawer'),
 		resultPhoto = document.getElementById('resultPhoto'),
-		sectionSingleView = document.getElementById('thumbSingleView'); 
+		sectionSingleView = document.getElementById('singleView'); 
 	
 	return {
 		init: init
@@ -34,6 +36,8 @@ var CoreMobCamera = (function() {
 		prefetchImg.src = 'images/effects-thumbs.png';
 		var prefetchImg2 = new Image();
 		prefetchImg2.src = 'images/effects/bokeh-stars.png';
+		
+		viewWidth = (window.innerWidth < finalPhotoDimension) ? window.innerWidth : finalPhotoDimension;
 		
 		bindEvents();		
 		createGallery();
@@ -125,13 +129,13 @@ var CoreMobCamera = (function() {
 		
 		// popstate alternative
 		document.getElementById('dismissSingleView').addEventListener('click', function(e){
+			e.preventDefault();
 			if (typeof history.pushState === 'function')	{
 				history.go(-1); // pop one state manially
 			}
 			showUI(sectionMain);
 			hideUI(sectionSingleView);
 		}, false);
-		
 		
 		// Photo Crop
 		document.getElementById('cropCancel').addEventListener('click', cancelCrop, false);
@@ -143,6 +147,14 @@ var CoreMobCamera = (function() {
 			//startUpload();
 			alert('This feature has not implemented yet.')
 		}, false);		
+		
+		// Uploading a photo -- not inplemented yet
+		document.getElementById('shareButton').addEventListener('click', function(e){
+			e.preventDefault();
+			//showUI(loader);
+			//startUpload();
+			alert('This feature has not implemented yet.')
+		}, false);	
 		
 		// Save a photo in iDB as blob
 		document.getElementById('saveButton').addEventListener('click', savePhoto, false);
@@ -172,6 +184,7 @@ var CoreMobCamera = (function() {
 	function applyCrop(e){
 		var newImg = imgCrop.getDataURL();
 		resultPhoto.src = newImg;
+		resultPhoto.style.width = resultPhoto.style.height = viewWidth +'px';
 		
 		// Removing the previously created canvas, if any
 		var prevEffect = document.getElementById('filteredPhoto');
@@ -190,17 +203,26 @@ var CoreMobCamera = (function() {
 		if(!filterButton) return;
 		
     	showUI(loader);
-    	
+		
+		// Removing the previously created canvas
+		var prevFilteredPhoto = document.getElementById('filteredPhoto');
+		if(prevFilteredPhoto) {	
+			prevFilteredPhoto.parentNode.removeChild(prevFilteredPhoto);
+		}
+			
 		setTimeout(function(){
 			ApplyEffects[filterButton.id](resultPhoto);
 		}, 1);	
 		
 	    (function () {
-			if(document.getElementById('filteredPhoto')) {
+	    	var newFilteredPhoto = document.getElementById('filteredPhoto');
+			if(newFilteredPhoto) {
+				console.log('canvas loaded yet!');
+				newFilteredPhoto.style.width = newFilteredPhoto.style.height = viewWidth +'px';
 				hideUI(loader);
 			} else {
 				console.log('canvas not loaded yet...');
-				setTimeout(arguments.callee, 500);
+				setTimeout(arguments.callee, 100);
 			}
 		})();
 		
@@ -228,7 +250,7 @@ var CoreMobCamera = (function() {
 				initialSlide: revIndex
 			});
 			
-			history.pushState({stage: 'singleView'}, null, '#singleview');
+			history.pushState({stage: 'singleView'}, null);
 			showUI(sectionSingleView);
 			hideUI(sectionMain);
 		} 	
@@ -366,9 +388,9 @@ var CoreMobCamera = (function() {
 		document.getElementById('thumbnails').style.width = thumbsPerRow * eachWidth + 'px';
 		
 		var container = document.querySelector('.swiper-container');
-		var viewWidth = (window.innerWidth < 612) ? window.innerWidth : 612;
+		
 		container.style.width = viewWidth +'px';
-		container.style.height = (viewWidth + 60) + 'px';
+		container.style.height = (viewWidth + 40) + 'px';
 	}
 	
 	function cloneThumbNode() {
@@ -392,11 +414,9 @@ var CoreMobCamera = (function() {
 
 	function cropAndResize() {
 		var photoObj = document.getElementById('userPhoto');
-		var finalWidth = 612,
-			finalHeight = 612;
 
 	    imgCrop = new PhotoCrop(photoObj, {
-			size: {w: finalWidth, h: finalHeight}
+			size: {w: finalPhotoDimension, h: finalPhotoDimension}
 	    });
 	    
 	    imgCrop.displayResult();
@@ -404,7 +424,10 @@ var CoreMobCamera = (function() {
 		hideUI(sectionMain);
 		showUI(sectionPhotoCrop);
 		
-		document.getElementById('textDimension').textContent = finalWidth + ' x ' + finalHeight;
+		document.getElementById('textDimension').textContent = finalPhotoDimension + ' x ' + finalPhotoDimension;
+		
+		var displayPhoto = document.getElementById('croppedPhoto');
+		displayPhoto.style.width = displayPhoto.style.height = viewWidth +'px';
 	}
 	
 	/**
