@@ -242,7 +242,8 @@ var CoreMobCamera = (function() {
 	 */
     function viewSinglePhoto(e) {
 		if(e.target.classList.contains('thumb')) {
-			var index = parseInt(e.target.dataset.index);
+			var index = (e.target.dataset) ? parseInt(e.target.dataset.index) : parseInt(e.target.getAttribute('data-index'));
+
 			var revIndex = numPhotosSaved - index -1;
 
 			var swiper = new Swiper('.swiper-container', { 
