@@ -6,72 +6,95 @@ var CoreMobCameraiDB = (function(){
 	// Supported with Prefix: Chrome, Blackberry10 and Firefox Mobile 15
 	// Unsupported: Opera Mobile, iOS6 Safari 
 	
-    window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
-    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+    var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+    var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
     
     // FF, IE10 and Chrome21+ use strings while older Chrome used constants
-    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
-    if(window.IDBTransaction) {
-	    IDBTransaction.READ_WRITE = 'readwrite' || IDBTransaction.READ_WRITE;
-    }
-    
-    window.URL = window.URL || window.webkitURL;
+    var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+    if(IDBTransaction) {
+	    IDBTransaction.READ_WRITE = IDBTransaction.READ_WRITE || 'readwrite';
+	}
+    var URL = window.URL || window.webkitURL;
 	
 	return {
 		openDB: openDB,
 		deleteDB: deleteDB,
-		putPhotoInDB: putPhotoInDB
+		putPhotoInDB: putPhotoInDB,
+		getPhotoFromDB: getPhotoFromDB,
+		deletePhoto: deletePhoto
 	};
 
-	function deleteDB(renderCallback) {
-		var req = window.indexedDB.deleteDatabase('gallery');
-		req.onsuccess = function(e){
+	function deleteDB() {
+		var req = indexedDB.deleteDatabase('coremobCamera');
+		req.onsuccess = function(e) {
 			console.log('Database is deleted: '+ e.result);
-			renderCallback();
 			alert('DB Deleted: Reload the page manually (temp)');
 		};
-		req.onerror = function(e){
+		req.onerror = function(e) {
 			console.log('Error deleting DB');
 		};
-		req.onblocked = function(e){
-			console.log('Deleting DB Blocked');		
-			alert('Deleting DB Blocked: Reload the page manually. '+ e.target.error);
+		req.onblocked = function(e) {		
+			alert('Deleting DB Blocked: Reload the page manually.',e);
+			console.log('Deleting DB Blocked: ', e);
+		};
+	}
+	
+	function deletePhoto(id, deleteDbCallback) {
+		var transaction = db.transaction(['photo'], IDBTransaction.READ_WRITE);
+        var objStore = transaction.objectStore('photo');
+      
+        var req = objStore.delete(id);
+      
+        req.onsuccess = function(e) {
+        	console.log('Deleted ID = '+id);
+        	deleteDbCallback();
+        };
+        req.onerror = function(e) {
+        	console.log('Error deleting: ', e);
+        };
+        req.onblocked = function(e){		
+			console.log('Deleting DB Blocked: ', e);
 		};
 	}
 	
     function openDB(renderCallback, failCallback) {
-    	if(typeof window.indexedDB === 'undefined') {
+    	if(typeof indexedDB === 'undefined') {
         	// iDB unsupported -- iOS, Opera, other older browsers
         	failCallback();
         	return;
         }
         
-        if(window.indexedDB === null) {
+        if(indexedDB === null) {
         	// possibly runnig the app from local file on older Firefox
         	alert('IndexedDB cannot run locally on some browsers. Try running this app from a server.')
         	return;
         }
         
-        var req = window.indexedDB.open('gallery', 1); // IE10 doesn't like variables as db names & ver? (need to test again)
-      
+        var req = indexedDB.open('coremobCamera', 1);       
         req.onsuccess = function(e) {
         	db = e.target.result;
         	console.log(db);
         	
         	// For Chrome < 23 (incl. mobile. v18) -- newer Chrome & FF deprecated it and use onupgradeneeded event
-        	if(typeof db.setVersion !== 'undefined') {
-        		console.log('using the deprecated setVersion');
+        	
+        	if(typeof db.setVersion === 'function') {
 	        	if(db.version != 1) {
+	        		console.log('using the deprecated setVersion');
 		            var setVersionReq = db.setVersion(1);
 		            
 		            setVersionReq.onsuccess = function(e) {
-		                createObjStoreOldBrowserOnly(db);
+		                createObjStore(db);
+		                e.target.transaction.oncomplete = function() {
+			                getPhotoFromDB(renderCallback);
+          				};
 		            };
 		            setVersionReq.onfailure = dbFailureHandler;
+		        } else { // Chrome > 23
+			        getPhotoFromDB(renderCallback);
 		        }
+        	} else { // Firefox, IE10
+	        	getPhotoFromDB(renderCallback);
         	}
-
-			getPhotoFromDB(renderCallback);
         };
         
         req.onfailure = dbFailureHandler;
@@ -91,12 +114,6 @@ var CoreMobCameraiDB = (function(){
 	    db.createObjectStore('photo', {keyPath: 'id', autoIncrement: true});
     }
     
-    function createObjStoreOldBrowserOnly(db) {
-	    // 'autoIncrement: true' causes DATA_ERR on Chrome Mobile (v18) :-(
-	    // so use timestamp as the key for now
-	    db.createObjectStore('photo', {keyPath: 'timestamp'});
-    }
-    
     function getPhotoFromDB(renderCallback) {
 	    var transaction = db.transaction(['photo'], IDBTransaction.READ_WRITE);
         var objStore = transaction.objectStore('photo');
@@ -108,7 +125,7 @@ var CoreMobCameraiDB = (function(){
         var photos = [];
   
         cursorReq.onsuccess = function(e) {
-       	
+       	console.log(e.target);
         	var cursor = e.target.result;
     	
         	if(cursor) {
@@ -116,7 +133,7 @@ var CoreMobCameraiDB = (function(){
 
           	  	if(cursor.value.photo) {
           	  		// either blob or data url string for Chrome18
-		        	var imgUrl = (typeof cursor.value.photo === 'object') ? window.URL.createObjectURL(cursor.value.photo) : cursor.value.photo;
+		        	var imgUrl = (typeof cursor.value.photo === 'object') ? URL.createObjectURL(cursor.value.photo) : cursor.value.photo;
 		          	item.photo = imgUrl;
 		        } 
 		        photos.push(item);
@@ -137,12 +154,12 @@ var CoreMobCameraiDB = (function(){
     }
 
     function storeInDB(data, renderCallback, blobFailureCallback){
-	    var transaction = db.transaction(['photo'], window.IDBTransaction.READ_WRITE);	    
+	    var transaction = db.transaction(['photo'], IDBTransaction.READ_WRITE);	    
         var objStore = transaction.objectStore('photo');
                 
         var req;
         try {   
-        	req = objStore.put(data);   
+        	req = objStore.put(data);
         } catch(e) { 
         	// expect the Chrome DataCloneError: DOM IDBDatabase Exception 25 - no blob support
         	console.log(e.name + ': ' + e.message);
@@ -153,13 +170,16 @@ var CoreMobCameraiDB = (function(){
         req.onsuccess = function(e) {
         	var imgUrl;
         	if(typeof data.photo === 'object') { // should be blob
-	        	imgUrl = window.URL.createObjectURL(data.photo);
+	        	imgUrl = URL.createObjectURL(data.photo);
         	} else { // not blob, just a base64 data url
 	        	imgUrl = data.photo;
         	}
-
+        	
+        	var id = e.target.result;
+        	
         	renderCallback({
 	        	title: data.title,
+	        	id: id,
 	        	photo: imgUrl
         	});
         };
