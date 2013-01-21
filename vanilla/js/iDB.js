@@ -70,16 +70,17 @@ var CoreMobCameraiDB = (function(){
         	return;
         }
         
-        var req = indexedDB.open('coremobCamera', 1);       
+        var req = indexedDB.open('coremobCamera'); 
         req.onsuccess = function(e) {
         	db = e.target.result;
         	console.log(db);
         	
-        	// For Chrome < 23 (incl. mobile. v18) -- newer Chrome & FF deprecated it and use onupgradeneeded event
+        	// For BB10 and Chrome < 23 (incl. mobile. v18) -- newer Chrome & FF deprecated it and use onupgradeneeded event
         	
         	if(typeof db.setVersion === 'function') {
+	        	console.log('browser using deprecated setVersion');
 	        	if(db.version != 1) {
-	        		console.log('using the deprecated setVersion');
+	        		console.log('setting new version with setVersion');
 		            var setVersionReq = db.setVersion(1);
 		            
 		            setVersionReq.onsuccess = function(e) {
@@ -89,7 +90,7 @@ var CoreMobCameraiDB = (function(){
           				};
 		            };
 		            setVersionReq.onfailure = dbFailureHandler;
-		        } else { // Chrome > 23
+		        } else { // Chrome >= 23
 			        getPhotoFromDB(renderCallback);
 		        }
         	} else { // Firefox, IE10
@@ -115,7 +116,7 @@ var CoreMobCameraiDB = (function(){
     }
     
     function getPhotoFromDB(renderCallback) {
-	    var transaction = db.transaction(['photo'], IDBTransaction.READ_WRITE);
+    	var transaction = db.transaction(['photo'], IDBTransaction.READ_WRITE);    
         var objStore = transaction.objectStore('photo');
         console.log(objStore); 
         
