@@ -159,10 +159,13 @@ var CoreMobCamera = (function() {
 		// Uploading a photo without storing in DB
 		document.getElementById('uploadButton').addEventListener('click', function(){
 			var data = {};
+			data.title = util.stripHtml(window.prompt('Description:'));
+			
 			var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');
 			getBlobFromCanvas(canvas, data);
+			
 			if(typeof data.photo === 'object') {
-				startUpload(data.photo);
+				startUpload(data);
 			}
 		}, false);		
 		
@@ -254,7 +257,7 @@ var CoreMobCamera = (function() {
 	    (function () {
 	    	var newFilteredPhoto = document.getElementById('filteredPhoto');
 			if(newFilteredPhoto) {
-				console.log('canvas loaded yet!');
+				console.log('canvas loaded!');
 				newFilteredPhoto.style.width = newFilteredPhoto.style.height = viewWidth +'px';
 				hideUI(loader);
 			} else {
@@ -316,7 +319,7 @@ var CoreMobCamera = (function() {
 		
 		CoreMobCameraiDB.putPhotoInDB(data, addSuccess, blobFailure);
 		
-		function addSuccess(dbPhotos){
+		function addSuccess(dbPhotos){ console.log('addSuccess called');
 			numPhotosSaved++;
 			renderPhotos(dbPhotos);
 			reInit();
@@ -518,11 +521,15 @@ var CoreMobCamera = (function() {
 	 * Upload to server -- data should contains a blob
 	 */
 	 
-	function startUpload(data) {		
-		var xhr = new XMLHttpRequest();        
-		xhr.open('POST', '/gallery');
+	function startUpload(data) {	
+		showUI(loader);
+		
+	    var formData = new FormData();
+	    formData.append('photo', data.photo);
+	    formData.append('title', data.title);
 	    
-	    showUI(loader);
+		var xhr = new XMLHttpRequest();        
+		xhr.open('POST', 'http://www.w3.org/coremob/gallery'); // TO DO -- need a real server path
 	    
 	    xhr.upload.addEventListener('progress', uploadProgress, false);
 	    xhr.addEventListener('load', uploadFinish, false);
@@ -533,17 +540,20 @@ var CoreMobCamera = (function() {
 	}
 
 	function uploadProgress(e) { 
+		console.log(e);
 		if (e.lengthComputable) {
-			// Display the upload progress status
+			loader.textContent = ((e.loaded / e.total * 100) >>> 0) + '%';
 		} 
 	}
 
 	function uploadFinish(e) {		
 		hideUI(loader);	
+		loader.textContent = 'Processing...';
+		reInit();
 	}
 
 	function uploadError(e) {
-		alert('An error occurred while uploading the file');
+		alert('An error occurred while uploading the file.');
 		console.log(e);
 	}
 	
