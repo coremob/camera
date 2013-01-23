@@ -3,7 +3,7 @@ var CoreMobCameraiDB = (function(){
 	var db;
 	
 	// Supported without prefix: IE10
-	// Supported with Prefix: Chrome, Blackberry10 and Firefox Mobile 15
+	// Supported with Prefix: Chrome, BlackBerry 10 and Firefox Mobile 15
 	// Unsupported: Opera Mobile, iOS6 Safari 
 	
     var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
@@ -65,7 +65,7 @@ var CoreMobCameraiDB = (function(){
         }
         
         if(indexedDB === null) {
-        	// possibly runnig the app from local file on older Firefox
+        	// possibly running the app from local file on older Firefox
         	alert('IndexedDB cannot run locally on some browsers. Try running this app from a server.')
         	return;
         }
@@ -75,7 +75,7 @@ var CoreMobCameraiDB = (function(){
         	db = e.target.result;
         	console.log(db);
         	
-        	// For BB10 and Chrome < 23 (incl. mobile. v18) -- newer Chrome & FF deprecated it and use onupgradeneeded event
+        	// For BB10 and Chrome < 23 (including Chrome Mobile v18) -- newer Chrome & FF deprecated it and use onupgradeneeded event
         	
         	if(typeof db.setVersion === 'function') {
 	        	console.log('browser using deprecated setVersion');

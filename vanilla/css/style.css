@@ -230,7 +230,7 @@ input[type="button"].dismiss {
 	background-color: #342f2f;
 }
 
-#userPhotoCrontainer, #photoResultContainer {
+#userPhotoContainer, #photoResultContainer {
     overflow: hidden;
     width: 100%;
     height: 100%;

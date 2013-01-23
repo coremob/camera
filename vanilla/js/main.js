@@ -99,8 +99,8 @@ var CoreMobCamera = (function() {
 	
     function renderFirstRun() {
 	    showUI(firstRun);
-	    var arrowHight = window.innerHeight * .5;
-		document.getElementsByClassName('arrow-container')[0].style.height = arrowHight + 'px';
+	    var arrowHeight = window.innerHeight * .5;
+		document.getElementsByClassName('arrow-container')[0].style.height = arrowHeight + 'px';
     }
        
 	function bindEvents() {
@@ -480,9 +480,9 @@ var CoreMobCamera = (function() {
 	function fileSelected(capture) {
 		
 	    var localFile = document.getElementById(capture).files[0],
-	    	imgFmt = /^(image\/bmp|image\/gif|image\/jpeg|image\/png)$/i;
+	    	imgFormat = /^(image\/bmp|image\/gif|image\/jpeg|image\/png)$/i;
 	    	
-	    if (! imgFmt.test(localFile.type)) {
+	    if (! imgFormat.test(localFile.type)) {
 	        alert('The image format, ' + localFile.type + ' is not supported.');
 			hideUI(loader);
 	        return;
