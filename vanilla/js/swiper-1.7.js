@@ -942,7 +942,7 @@ Swiper.prototype = {
 		if("MsPerspective" in div.style) s3d=true;
 		if("perspective" in div.style) s3d=true;
 
-		/* Test with Media query for Webkit to prevent FALSE positive*/	
+		/* Test with Media query for WebKit to prevent FALSE positive*/	
 		if(s3d && ("webkitPerspective" in div.style) ) {
 			var st = document.createElement('style');
 			st.textContent = '@media (-webkit-transform-3d), (transform-3d), (-moz-transform-3d), (-o-transform-3d), (-ms-transform-3d) {#test3d{height:5px}}'
