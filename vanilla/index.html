@@ -12,7 +12,7 @@
     <meta name="msapplication-TileImage" content="images/icons/144x144.png">
     <meta name="msapplication-TileColor" content="#bada55">
     
-	<!-- Home Screen icons for iOS, Android, Blackberry etc. -->
+	<!-- Home Screen icons for iOS, Android, BlackBerry, etc. -->
 	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/icons/144x144.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/icons/72x72.png">
     <link rel="apple-touch-icon-precomposed" href="images/icons/57x57.png">
@@ -65,15 +65,20 @@
 	</section>
 	
 	<!-- Gallery Carousel -->
-	<section id="thumbSingleView" hidden>
-		<div id="dismissSingleView" class="icon-x" data-icon="&#x2297;"></div>
+	<section id="singleView" hidden>
+		<header>
+			<nav>
+				<a id="dismissSingleView" class="back" data-icon="&#x21a9;" href="index.html"></a>
+				<a id="shareButton" class="share" class="back" data-icon="&#x25b2;" href="index.html"></a>
+			</nav>
+		</header>
 		<div class="swiper-container"></div>
 		<div class="pagination"></div>
 	</section>
 	
 	<!-- Crop and Resize -->
 	<section id="photoCrop" hidden>
-		<div id="userPhotoCrontainer">
+		<div id="userPhotoContainer">
 			<img id="userPhoto" hidden/>
 		</div>
 		<div class="photoCropControls">
@@ -92,7 +97,7 @@
 	<!-- Photo Preview -->
 	<section id="photoEffect" hidden>
 		<div id="photoResultContainer">
-			<img id="resultPhoto"/>
+			<img id="resultPhoto">
 		</div>	
 	
 		<!-- Photo Effects Buttons -->
@@ -131,7 +136,7 @@
 			<!-- File Save and Upload -->
 			<form id="uploadForm" class="action-buttons" enctype="multipart/form-data" method="post" action="/upload">
 				<input type="button" value="Save in DB" id="saveButton">
-				<input type="button" value="Upload" id="uploadButton" data-icon=";">
+				<input type="button" value="Upload" id="uploadButton">
 			</form>
 		</nav>
 	</section>

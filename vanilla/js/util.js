@@ -1,6 +1,7 @@
 var util = (function() {
 
 	function stripHtml(str) {
+		str = (str == null) ? '' : String(str);
 		return str.replace(/<.*?>/g, '');
 	}
 	
@@ -17,18 +18,19 @@ var util = (function() {
 	    // Blob() const supported on: FF13, Chrome 20, IE10, O 12.10, Safari 6
 	    window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
         
-        if (window.Blob) {
+        if (window.Blob && typeof Uint8Array === 'function') {
         	console.log('using Blob constructor');
         // IE10, FF 17
-        	intArray = new Uint8Array(arrayBuffer);
+        	var intArray = new Uint8Array(arrayBuffer);
             for (i = 0; i < byteStr.length; i++) {
                 intArray[i] = byteStr.charCodeAt(i);
             }            
             try {
-            	return new Blob(
+            	var b = new Blob(
                 	[arrayBuffer || intArray],
                 	{type: mimeStr}
                 );
+                return b;
             } catch(e) {
             	return null;
 	            console.log(e);

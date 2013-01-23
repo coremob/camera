@@ -12,6 +12,8 @@ var CoreMobCamera = (function() {
 	var maxFilesize = 1048576 * 3.5; // Max image size is 3.5MB (iPhone5, Galaxy SIII, Lumia920 < 3MB)
 	var numPhotosSaved = 0;
 	var imgCrop;
+	var finalPhotoDimension = 612;
+	var viewWidth;
 	var isBlobSupported = true;
 	
 	// UI
@@ -23,7 +25,7 @@ var CoreMobCamera = (function() {
 		sectionPhotoEffect = document.getElementById('photoEffect'),
 		sectionFilterDrawer = document.getElementById('filterDrawer'),
 		resultPhoto = document.getElementById('resultPhoto'),
-		sectionSingleView = document.getElementById('thumbSingleView'); 
+		sectionSingleView = document.getElementById('singleView'); 
 	
 	return {
 		init: init
@@ -35,8 +37,10 @@ var CoreMobCamera = (function() {
 		var prefetchImg2 = new Image();
 		prefetchImg2.src = 'images/effects/bokeh-stars.png';
 		
+		viewWidth = (window.innerWidth < finalPhotoDimension) ? window.innerWidth : finalPhotoDimension;
+		
 		bindEvents();		
-		createGallery();
+		openDatabase();
 		checkMediaCaptureSupport();
 		console.log(navigator.userAgent);
 	}
@@ -49,12 +53,27 @@ var CoreMobCamera = (function() {
 		uiElem.setAttribute('hidden', 'hidden');
 	}
 	
+	function openDatabase() {
+		CoreMobCameraiDB.openDB(dbSuccess, dbFailure);
+		function dbSuccess(dbPhotos) {
+			createGallery(dbPhotos);
+		}
+		function dbFailure() {
+			renderFirstRun();
+			var warning = document.getElementById('warningIndexedDb');
+			showUI(warning);
+			document.getElementById('saveButton').setAttribute('disabled', 'disabled');
+	    }
+	}
+	
 	function reInit() {
 		hideUI(firstRun);
-		showUI(sectionMain);
 		hideUI(sectionPhotoEffect);
 		hideUI(sectionFilterDrawer);
-
+		hideUI(sectionSingleView);
+		
+		showUI(sectionMain);
+		
 		var index = numPhotosSaved-1;
 		var q = '[data-index="' + index + '"]';
 		
@@ -63,7 +82,7 @@ var CoreMobCamera = (function() {
 		cloneThumbNode();
 	}
 	
-	// Note: IE10 and Maxthon return the window.FileReader as 'function' but fail to read image
+	// Note: IE10 Mobile and Maxthon return the window.FileReader as 'function' but fail to read image
 	// I need to write another capability check besides this function
 	function checkMediaCaptureSupport() {
 		if(typeof window.FileReader === 'undefined') {
@@ -80,8 +99,8 @@ var CoreMobCamera = (function() {
 	
     function renderFirstRun() {
 	    showUI(firstRun);
-	    var arrowHight = window.innerHeight * .5;
-		document.getElementsByClassName('arrow-container')[0].style.height = arrowHight + 'px';
+	    var arrowHeight = window.innerHeight * .5;
+		document.getElementsByClassName('arrow-container')[0].style.height = arrowHeight + 'px';
     }
        
 	function bindEvents() {
@@ -116,7 +135,7 @@ var CoreMobCamera = (function() {
 		// Pop back to Main
 		window.addEventListener('popstate', function(e){
 			console.log(history.state);
-			if (history.state === null || history.state.stage == 'main') {
+			if (history.state == undefined || history.state.stage == 'main') {
 				showUI(sectionMain);
 				hideUI(sectionSingleView);
 				history.replaceState({stage: 'main'}, null);
@@ -125,6 +144,7 @@ var CoreMobCamera = (function() {
 		
 		// popstate alternative
 		document.getElementById('dismissSingleView').addEventListener('click', function(e){
+			e.preventDefault();
 			if (typeof history.pushState === 'function')	{
 				history.go(-1); // pop one state manially
 			}
@@ -132,31 +152,63 @@ var CoreMobCamera = (function() {
 			hideUI(sectionSingleView);
 		}, false);
 		
-		
 		// Photo Crop
 		document.getElementById('cropCancel').addEventListener('click', cancelCrop, false);
 		document.getElementById('cropApply').addEventListener('click', applyCrop, false);	
 		
-		// Uploading a photo -- not inplemented yet
+		// Uploading a photo without storing in DB
 		document.getElementById('uploadButton').addEventListener('click', function(){
-			//showUI(loader);
-			//startUpload();
-			alert('This feature has not implemented yet.')
+			var data = {};
+			data.title = util.stripHtml(window.prompt('Description:'));
+			
+			var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');
+			getBlobFromCanvas(canvas, data);
+			
+			if(typeof data.photo === 'object') {
+				startUpload(data);
+			}
 		}, false);		
+		
+		// Uploading a photo
+		document.getElementById('shareButton').addEventListener('click', function(e){
+			e.preventDefault();
+			// get blob from db then send
+			
+			//startUpload(data);
+			alert('This feature has not implemented yet.')
+		}, false);	
 		
 		// Save a photo in iDB as blob
 		document.getElementById('saveButton').addEventListener('click', savePhoto, false);
 		
+		// Delete a photo
+		document.getElementById('singleView').addEventListener('click', function(e) {
+			console.log(e.target);
+			if(e.target.classList.contains('delete-photo')) {
+				var confirmDelete = confirm('Are you sure you want to delete the photo?');
+				if(confirmDelete) {
+					var deletingId = parseInt(e.target.getAttribute('data-id'));
+					CoreMobCameraiDB.deletePhoto(deletingId, deleteCallback);	
+				}
+			}
+			function deleteCallback() {
+				CoreMobCameraiDB.getPhotoFromDB(reRenderCallback);
+				
+				function reRenderCallback(dbPhotos) {
+					document.querySelector('.thumbnail-wrapper').innerHTML = '';
+					document.querySelector('.swiper-container').innerHTML = '';
+					createGallery(dbPhotos);
+					reInit();
+				}
+			}
+      	}, false);
+      	
 		// Delete All - temp
 		document.getElementById('clearDB').addEventListener('click', function() {
 			var confirmDelete = confirm('Are you sure you want to delete all photos?');
 			if(confirmDelete) {
-				CoreMobCameraiDB.deleteDB(deleteDbCallback);	
+				CoreMobCameraiDB.deleteDB();	
 			}		
-			function deleteDbCallback() {
-				// do stuff
-			}
-			
 		}, false);
 	}
     
@@ -172,6 +224,7 @@ var CoreMobCamera = (function() {
 	function applyCrop(e){
 		var newImg = imgCrop.getDataURL();
 		resultPhoto.src = newImg;
+		resultPhoto.style.width = resultPhoto.style.height = viewWidth +'px';
 		
 		// Removing the previously created canvas, if any
 		var prevEffect = document.getElementById('filteredPhoto');
@@ -190,17 +243,26 @@ var CoreMobCamera = (function() {
 		if(!filterButton) return;
 		
     	showUI(loader);
-    	
+		
+		// Removing the previously created canvas
+		var prevFilteredPhoto = document.getElementById('filteredPhoto');
+		if(prevFilteredPhoto) {	
+			prevFilteredPhoto.parentNode.removeChild(prevFilteredPhoto);
+		}
+			
 		setTimeout(function(){
 			ApplyEffects[filterButton.id](resultPhoto);
 		}, 1);	
 		
 	    (function () {
-			if(document.getElementById('filteredPhoto')) {
+	    	var newFilteredPhoto = document.getElementById('filteredPhoto');
+			if(newFilteredPhoto) {
+				console.log('canvas loaded!');
+				newFilteredPhoto.style.width = newFilteredPhoto.style.height = viewWidth +'px';
 				hideUI(loader);
 			} else {
 				console.log('canvas not loaded yet...');
-				setTimeout(arguments.callee, 500);
+				setTimeout(arguments.callee, 100);
 			}
 		})();
 		
@@ -220,15 +282,16 @@ var CoreMobCamera = (function() {
 	 */
     function viewSinglePhoto(e) {
 		if(e.target.classList.contains('thumb')) {
-			var index = parseInt(e.target.dataset.index);
-			var revIndex = numPhotosSaved - index -1;
+			var index = (e.target.dataset) ? parseInt(e.target.dataset.index) : parseInt(e.target.getAttribute('data-index'));
 
+			var revIndex = numPhotosSaved - index -1;
+			console.log(revIndex);
 			var swiper = new Swiper('.swiper-container', { 
 				pagination: '.pagination',
 				initialSlide: revIndex
 			});
 			
-			history.pushState({stage: 'singleView'}, null, '#singleview');
+			history.pushState({stage: 'singleView'}, null);
 			showUI(sectionSingleView);
 			hideUI(sectionMain);
 		} 	
@@ -238,6 +301,7 @@ var CoreMobCamera = (function() {
 	 * Save Photo (either blob or data url string) in iDB 
 	 * saving blob is currently only supported by Firefox and IE10
 	 */
+	
     function savePhoto(e) {
     	var data = {};
 		var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');	
@@ -245,30 +309,17 @@ var CoreMobCamera = (function() {
 		if(!canvas) return;
 		
 		if(isBlobSupported === false) { 
-			// no blob support. Storing dataURL string instead of blob.
+			// no blob support for iDB. Storing dataURL string instead of blob.
 			data.photo = canvas.toDataURL('image/jpeg');
-			data.timestamp = new Date().getTime(); // doing this for Chrome18 :-(
 		} 
-		else if (canvas.toBlob) { 
-			//canvas.blob() supported. Store blob.
-			var blob = canvas.toBlob(function(blob){
-				data.photo = blob;
-			}, 'image/jpeg');
-		} else { 
-			// get Base64 dataurl from canvas, then convert it to Blob
-			var dataUrl = canvas.toDataURL('image/jpeg');
-			data.photo = util.dataUrlToBlob(dataUrl);
-			if(data.photo == null) {
-				// Failed. storing dataURL string instead.
-				console.log('The browser does not support Blob Constructing.');
-				data.photo = canvas.toDataURL('image/jpeg');
-			}
+		else {
+			getBlobFromCanvas(canvas, data);
 		}
-		
 		data.title = util.stripHtml(window.prompt('Description:'));
+		
 		CoreMobCameraiDB.putPhotoInDB(data, addSuccess, blobFailure);
 		
-		function addSuccess(dbPhotos){
+		function addSuccess(dbPhotos){ console.log('addSuccess called');
 			numPhotosSaved++;
 			renderPhotos(dbPhotos);
 			reInit();
@@ -278,7 +329,7 @@ var CoreMobCamera = (function() {
 			// pass Data URL instead of blob
 			isBlobSupported = false;
 			data.photo = canvas.toDataURL('image/jpeg');
-			data.timestamp = new Date().getTime(); // added because Chrome 18 does not support auto-increment id
+			
 			CoreMobCameraiDB.putPhotoInDB(data, addSuccess);
 			
 			var warning = document.getElementById('warningIndexedDbBlob');
@@ -286,21 +337,26 @@ var CoreMobCamera = (function() {
 		}
     }
     
-	function createGallery() {
-		
-		CoreMobCameraiDB.openDB(dbSuccess, dbFailure);
-		function dbSuccess(dbPhotos) {
-			renderPhotos(dbPhotos);
-			displayThumbnails();
-			cloneThumbNode();
-			scrollInfinitely();	
+    function getBlobFromCanvas(canvas, data) {
+		if (canvas.toBlob) { //canvas.blob() supported. Store blob.
+			var blob = canvas.toBlob(function(blob){
+				data.photo = blob;
+			}, 'image/jpeg');
+		} else { // get Base64 dataurl from canvas, then convert it to Blob
+			var dataUrl = canvas.toDataURL('image/jpeg');
+			data.photo = util.dataUrlToBlob(dataUrl);
+			if(data.photo == null) { // Failed. storing dataURL string instead.
+				console.log('The browser does not support Blob Constructing.');
+				data.photo = canvas.toDataURL('image/jpeg');
+			}
 		}
-		function dbFailure() {
-			renderFirstRun();
-			var warning = document.getElementById('warningIndexedDb');
-			showUI(warning);
-			document.getElementById('saveButton').setAttribute('disabled', 'disabled');
-	    }		
+	}
+	
+	function createGallery(dbPhotos) {
+		renderPhotos(dbPhotos);
+		displayThumbnails();
+		cloneThumbNode();
+		scrollInfinitely();	
 	}
 	
 	// Call back after iDB success
@@ -309,10 +365,10 @@ var CoreMobCamera = (function() {
 		var data;
 		var wrapper = document.querySelector('.thumbnail-wrapper');
 
-		if(dataArray.photo) {
+		if(dataArray.photo) { // a new photo added
 			data = dataArray;
 			var imgUrl = dataArray.photo;
-			var el = thumb(dataArray.title, imgUrl, numPhotosSaved-1);
+			var el = thumb(dataArray, imgUrl, numPhotosSaved-1);
 			wrapper.insertBefore(el, wrapper.firstChild);
 			return;
 		}
@@ -325,15 +381,23 @@ var CoreMobCamera = (function() {
 
 	    firstRun.setAttribute('hidden', 'hidden');
     	    	
-    	function thumb(title, imgUrl, index) {
+    	function thumb(data, imgUrl, index) {
 	    	var el = document.createElement('figure');
 	    	el.className = 'thumb';
 	    	el.setAttribute('data-index', index);
 	    	el.style.backgroundImage = 'url('+imgUrl+')';
 	    	
 	    	var cap = document.createElement('figcaption');
-	    	cap.textContent = title;
-	    	el.appendChild(cap);			
+	    	cap.textContent = data.title;
+	    	
+	    	var a = document.createElement('a');
+	    	a.className = 'delete-photo';
+	    	a.setAttribute('data-id', data.id);
+        	a.textContent = ' [delete]';
+	    	
+	    	el.appendChild(cap);
+	    	el.appendChild(a);		
+	    		
 	    	return el;
     	}
         makeThumbsFromArray();
@@ -346,15 +410,16 @@ var CoreMobCamera = (function() {
 		    while (data = dataArray.pop()) {
 		    	if(data.photo) {
 		    		imgUrl = data.photo;
-			    	figureEl = thumb(data.title, imgUrl, dataArray.length);
+			    	figureEl = thumb(data, imgUrl, dataArray.length);
 			    	wrapper.appendChild(figureEl);
 		    	}
 			}   
         }		
 		
 		function revokeDataUrls(dataArrayCopy) {
+			var URL = window.URL || window.webkitURL;
 			for(var i = 0; i < dataArrayCopy.length; i++) {
-				window.URL.revokeObjectURL(dataArrayCopy[i].photo);
+				URL.revokeObjectURL(dataArrayCopy[i].photo);
 			}
 		}
     }
@@ -366,9 +431,9 @@ var CoreMobCamera = (function() {
 		document.getElementById('thumbnails').style.width = thumbsPerRow * eachWidth + 'px';
 		
 		var container = document.querySelector('.swiper-container');
-		var viewWidth = (window.innerWidth < 612) ? window.innerWidth : 612;
+		
 		container.style.width = viewWidth +'px';
-		container.style.height = (viewWidth + 60) + 'px';
+		container.style.height = (viewWidth + 40) + 'px';
 	}
 	
 	function cloneThumbNode() {
@@ -392,11 +457,9 @@ var CoreMobCamera = (function() {
 
 	function cropAndResize() {
 		var photoObj = document.getElementById('userPhoto');
-		var finalWidth = 612,
-			finalHeight = 612;
 
 	    imgCrop = new PhotoCrop(photoObj, {
-			size: {w: finalWidth, h: finalHeight}
+			size: {w: finalPhotoDimension, h: finalPhotoDimension}
 	    });
 	    
 	    imgCrop.displayResult();
@@ -404,7 +467,10 @@ var CoreMobCamera = (function() {
 		hideUI(sectionMain);
 		showUI(sectionPhotoCrop);
 		
-		document.getElementById('textDimension').textContent = finalWidth + ' x ' + finalHeight;
+		document.getElementById('textDimension').textContent = finalPhotoDimension + ' x ' + finalPhotoDimension;
+		
+		var displayPhoto = document.getElementById('croppedPhoto');
+		displayPhoto.style.width = displayPhoto.style.height = viewWidth +'px';
 	}
 	
 	/**
@@ -414,9 +480,9 @@ var CoreMobCamera = (function() {
 	function fileSelected(capture) {
 		
 	    var localFile = document.getElementById(capture).files[0],
-	    	imgFmt = /^(image\/bmp|image\/gif|image\/jpeg|image\/png)$/i;
+	    	imgFormat = /^(image\/bmp|image\/gif|image\/jpeg|image\/png)$/i;
 	    	
-	    if (! imgFmt.test(localFile.type)) {
+	    if (! imgFormat.test(localFile.type)) {
 	        alert('The image format, ' + localFile.type + ' is not supported.');
 			hideUI(loader);
 	        return;
@@ -452,46 +518,51 @@ var CoreMobCamera = (function() {
 	}
 	
 	/**
-	 * XHR2 File Upload to server --- Not done yet
+	 * Upload to server -- data should contains a blob
 	 */
 	 
-	function startUpload() {
-		// Get form data - no, not uploading the file from form
-		//var formData = new FormData(document.getElementById('uploadForm')); 
+	function startUpload(data) {	
+		showUI(loader);
 		
-		// TO DO ---------
-		var data = 'some data to be stored. TO DO';
-	
+	    var formData = new FormData();
+	    formData.append('photo', data.photo);
+	    formData.append('title', data.title);
+	    
 		var xhr = new XMLHttpRequest();        
+		xhr.open('POST', 'http://www.w3.org/coremob/gallery'); // TO DO -- need a real server path
+	    
 	    xhr.upload.addEventListener('progress', uploadProgress, false);
 	    xhr.addEventListener('load', uploadFinish, false);
 	    xhr.addEventListener('error', uploadError, false);
 	    xhr.addEventListener('abort', uploadAbort, false);
-	    xhr.open('POST', '/upload');
+	    
 	    xhr.send(data);
 	}
 
 	function uploadProgress(e) { 
+		console.log(e);
 		if (e.lengthComputable) {
-			// Display the upload progress status
+			loader.textContent = ((e.loaded / e.total * 100) >>> 0) + '%';
 		} 
 	}
 
 	function uploadFinish(e) {		
 		hideUI(loader);	
+		loader.textContent = 'Processing...';
+		reInit();
 	}
 
 	function uploadError(e) {
-		console.log('An error occurred while uploading the file');
+		alert('An error occurred while uploading the file.');
+		console.log(e);
 	}
 	
 	function uploadAbort(e) {
-		console.log('The upload has been aborted by the user or the connection has been dropped.');
+		alert('The upload has been aborted by the user or the connection has been dropped.');
+		console.log(e);
 	}
 	
 }());
-
- 
 
 onload = function() {
 	CoreMobCamera.init();

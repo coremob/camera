@@ -23,7 +23,7 @@
 	-ms-backface-visibility:hidden;
 	-o-backface-visibility:hidden;
 	backface-visibility:hidden;
-	/* Fix of Webkit flickering */
+	/* Fix of WebKit flickering */
 	z-index:1;
 }
 .swiper-wrapper {
