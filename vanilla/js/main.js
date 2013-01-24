@@ -159,11 +159,12 @@ var CoreMobCamera = (function() {
 		// Uploading a photo without storing in DB
 		document.getElementById('uploadButton').addEventListener('click', function(){
 			var data = {};
-			data.title = util.stripHtml(window.prompt('Description:'));
-			
+
 			var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');
 			getBlobFromCanvas(canvas, data);
-			
+
+			data.title = util.stripHtml(window.prompt('Description:'));			
+
 			if(typeof data.photo === 'object') {
 				startUpload(data);
 			}
@@ -525,18 +526,18 @@ var CoreMobCamera = (function() {
 		showUI(loader);
 		
 	    var formData = new FormData();
-	    formData.append('photo', data.photo);
+	    formData.append('image', data.photo);
 	    formData.append('title', data.title);
 	    
 		var xhr = new XMLHttpRequest();        
-		xhr.open('POST', 'http://www.w3.org/coremob/gallery'); // TO DO -- need a real server path
+		xhr.open('POST', '/gallery'); 
 	    
 	    xhr.upload.addEventListener('progress', uploadProgress, false);
 	    xhr.addEventListener('load', uploadFinish, false);
 	    xhr.addEventListener('error', uploadError, false);
 	    xhr.addEventListener('abort', uploadAbort, false);
 	    
-	    xhr.send(data);
+	    xhr.send(formData);
 	}
 
 	function uploadProgress(e) { 
