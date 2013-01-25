@@ -178,6 +178,9 @@ var CoreMobCamera = (function() {
 			// get blob from db then send
 		        if (photoid) {
 			    CoreMobCameraiDB.getPhotoFromDB(photoid, function(data) {
+				if (typeof data.photo === "string") {
+				    data.photo = util.dataUrlToBlob(data.photo);
+				}
 				if(data && typeof data.photo === 'object') {
 				    startUpload(data);
 				}
