@@ -193,7 +193,7 @@ var CoreMobCamera = (function() {
 				}
 			}
 			function deleteCallback() {
-				CoreMobCameraiDB.getPhotoFromDB(reRenderCallback);
+				CoreMobCameraiDB.listPhotoFromDB(reRenderCallback);
 				
 				function reRenderCallback(dbPhotos) {
 					document.querySelector('.thumbnail-wrapper').innerHTML = '';
