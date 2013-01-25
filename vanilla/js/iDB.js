@@ -13,6 +13,7 @@ var CoreMobCameraiDB = (function(){
     var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
     if(IDBTransaction) {
 	    IDBTransaction.READ_WRITE = IDBTransaction.READ_WRITE || 'readwrite';
+	    IDBTransaction.READ_ONLY = IDBTransaction.READ_ONLY || 'readonly';
 	}
     var URL = window.URL || window.webkitURL;
 	
@@ -131,7 +132,7 @@ var CoreMobCameraiDB = (function(){
     }
 
     function listPhotosFromDB(renderCallback) {
-    	var transaction = db.transaction(['photo'], IDBTransaction.READ_WRITE);    
+    	var transaction = db.transaction(['photo'], IDBTransaction.READ_ONLY);
         var objStore = transaction.objectStore('photo');
         console.log(objStore); 
         
