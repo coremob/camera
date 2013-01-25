@@ -159,11 +159,12 @@ var CoreMobCamera = (function() {
 		// Uploading a photo without storing in DB
 		document.getElementById('uploadButton').addEventListener('click', function(){
 			var data = {};
-			data.title = util.stripHtml(window.prompt('Description:'));
-			
+
 			var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');
 			getBlobFromCanvas(canvas, data);
-			
+
+			data.title = util.stripHtml(window.prompt('Description:'));			
+
 			if(typeof data.photo === 'object') {
 				startUpload(data);
 			}
@@ -172,10 +173,19 @@ var CoreMobCamera = (function() {
 		// Uploading a photo
 		document.getElementById('shareButton').addEventListener('click', function(e){
 			e.preventDefault();
+		        var photoid = parseInt(e.target.getAttribute("data-photoid"), 10);
+
 			// get blob from db then send
-			
-			//startUpload(data);
-			alert('This feature has not implemented yet.')
+		        if (photoid) {
+			    CoreMobCameraiDB.getPhotoFromDB(photoid, function(data) {
+				if (typeof data.photo === "string") {
+				    data.photo = util.dataUrlToBlob(data.photo);
+				}
+				if(data && typeof data.photo === 'object') {
+				    startUpload(data);
+				}
+			    });
+			}			
 		}, false);	
 		
 		// Save a photo in iDB as blob
@@ -192,7 +202,7 @@ var CoreMobCamera = (function() {
 				}
 			}
 			function deleteCallback() {
-				CoreMobCameraiDB.getPhotoFromDB(reRenderCallback);
+				CoreMobCameraiDB.listPhotoFromDB(reRenderCallback);
 				
 				function reRenderCallback(dbPhotos) {
 					document.querySelector('.thumbnail-wrapper').innerHTML = '';
@@ -281,14 +291,22 @@ var CoreMobCamera = (function() {
 	 *  View a single photo from the Gallery
 	 */
     function viewSinglePhoto(e) {
+	        function setPhotoTarget(index) {
+		    var photoId = document.querySelector('.swiper-container [data-index="' + index + '"]').getAttribute('data-photoid');
+		    document.getElementById('shareButton').setAttribute('data-photoid', photoId);		    
+		}
+
 		if(e.target.classList.contains('thumb')) {
 			var index = (e.target.dataset) ? parseInt(e.target.dataset.index) : parseInt(e.target.getAttribute('data-index'));
-
 			var revIndex = numPhotosSaved - index -1;
 			console.log(revIndex);
+		        setPhotoTarget(index);
 			var swiper = new Swiper('.swiper-container', { 
 				pagination: '.pagination',
-				initialSlide: revIndex
+			        initialSlide: revIndex,
+			        onSlideChangeEnd: function(s) {
+				    setPhotoTarget(numPhotosSaved - s.activeSlide - 1);
+				}
 			});
 			
 			history.pushState({stage: 'singleView'}, null);
@@ -385,6 +403,7 @@ var CoreMobCamera = (function() {
 	    	var el = document.createElement('figure');
 	    	el.className = 'thumb';
 	    	el.setAttribute('data-index', index);
+	    	el.setAttribute('data-photoid', data.id);
 	    	el.style.backgroundImage = 'url('+imgUrl+')';
 	    	
 	    	var cap = document.createElement('figcaption');
@@ -525,18 +544,18 @@ var CoreMobCamera = (function() {
 		showUI(loader);
 		
 	    var formData = new FormData();
-	    formData.append('photo', data.photo);
+	    formData.append('image', data.photo);
 	    formData.append('title', data.title);
 	    
 		var xhr = new XMLHttpRequest();        
-		xhr.open('POST', 'http://www.w3.org/coremob/gallery'); // TO DO -- need a real server path
+		xhr.open('POST', '/gallery'); 
 	    
 	    xhr.upload.addEventListener('progress', uploadProgress, false);
 	    xhr.addEventListener('load', uploadFinish, false);
 	    xhr.addEventListener('error', uploadError, false);
 	    xhr.addEventListener('abort', uploadAbort, false);
 	    
-	    xhr.send(data);
+	    xhr.send(formData);
 	}
 
 	function uploadProgress(e) { 
