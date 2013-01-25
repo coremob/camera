@@ -282,14 +282,22 @@ var CoreMobCamera = (function() {
 	 *  View a single photo from the Gallery
 	 */
     function viewSinglePhoto(e) {
+	        function setPhotoTarget(index) {
+		    var photoId = document.querySelector('.swiper-container [data-index="' + index + '"]').getAttribute('data-photoid');
+		    document.getElementById('shareButton').setAttribute('data-photoid', photoId);		    
+		}
+
 		if(e.target.classList.contains('thumb')) {
 			var index = (e.target.dataset) ? parseInt(e.target.dataset.index) : parseInt(e.target.getAttribute('data-index'));
-
 			var revIndex = numPhotosSaved - index -1;
 			console.log(revIndex);
+		        setPhotoTarget(index);
 			var swiper = new Swiper('.swiper-container', { 
 				pagination: '.pagination',
-				initialSlide: revIndex
+			        initialSlide: revIndex,
+			        onSlideChangeEnd: function(s) {
+				    setPhotoTarget(numPhotosSaved - s.activeSlide - 1);
+				}
 			});
 			
 			history.pushState({stage: 'singleView'}, null);
@@ -386,6 +394,7 @@ var CoreMobCamera = (function() {
 	    	var el = document.createElement('figure');
 	    	el.className = 'thumb';
 	    	el.setAttribute('data-index', index);
+	    	el.setAttribute('data-photoid', data.id);
 	    	el.style.backgroundImage = 'url('+imgUrl+')';
 	    	
 	    	var cap = document.createElement('figcaption');
