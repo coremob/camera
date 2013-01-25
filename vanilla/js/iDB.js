@@ -20,6 +20,7 @@ var CoreMobCameraiDB = (function(){
 		openDB: openDB,
 		deleteDB: deleteDB,
 		putPhotoInDB: putPhotoInDB,
+	        getPhotoFromDB: getPhotoFromDB,
 		listPhotosFromDB: listPhotosFromDB,
 		deletePhoto: deletePhoto
 	};
@@ -115,6 +116,20 @@ var CoreMobCameraiDB = (function(){
 	    db.createObjectStore('photo', {keyPath: 'id', autoIncrement: true});
     }
     
+    function getPhotoFromDB(photoid, callback) {
+	var transaction = db.transaction(['photo'], IDBTransaction.READ_ONLY);
+        var objStore = transaction.objectStore('photo');      
+        var req = objStore.get(photoid);
+      
+        req.onsuccess = function(e) {
+	    callback(e.target.result);
+        };
+        req.onerror = function(e) {
+        	console.log('Error getting ' + photoid + ': ', e);
+        };
+
+    }
+
     function listPhotosFromDB(renderCallback) {
     	var transaction = db.transaction(['photo'], IDBTransaction.READ_WRITE);    
         var objStore = transaction.objectStore('photo');
