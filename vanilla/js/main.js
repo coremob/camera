@@ -173,10 +173,16 @@ var CoreMobCamera = (function() {
 		// Uploading a photo
 		document.getElementById('shareButton').addEventListener('click', function(e){
 			e.preventDefault();
+		        var photoid = parseInt(e.target.getAttribute("data-photoid"), 10);
+
 			// get blob from db then send
-			
-			//startUpload(data);
-			alert('This feature has not implemented yet.')
+		        if (photoid) {
+			    CoreMobCameraiDB.getPhotoFromDB(photoid, function(data) {
+				if(data && typeof data.photo === 'object') {
+				    startUpload(data);
+				}
+			    });
+			}			
 		}, false);	
 		
 		// Save a photo in iDB as blob
