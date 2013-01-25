@@ -32,10 +32,11 @@ var util = (function() {
                 );
                 return b;
             } catch(e) {
-            	return null;
-	            console.log(e);
+		// Chrome on Android as window.Blob but not the constructor :(
+	        console.log(e);
             }
-        } else if (BlobBuilder) {
+        }
+	if (BlobBuilder) {
         	console.log('using BlobBuilder');
 	        var bb = new BlobBuilder();
 	        bb.append(arrayBuffer);
