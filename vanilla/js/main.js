@@ -57,6 +57,7 @@ var CoreMobCamera = (function() {
 		CoreMobCameraiDB.openDB(dbSuccess, dbFailure);
 		function dbSuccess(dbPhotos) {
 			createGallery(dbPhotos);
+			document.getElementById('uploadButton').setAttribute('hidden', 'hidden');
 		}
 		function dbFailure() {
 			renderFirstRun();
@@ -298,7 +299,7 @@ var CoreMobCamera = (function() {
 
 		if(e.target.classList.contains('thumb')) {
 			var index = (e.target.dataset) ? parseInt(e.target.dataset.index) : parseInt(e.target.getAttribute('data-index'));
-			var revIndex = numPhotosSaved - index -1;
+			var revIndex = numPhotosSaved - index - 1;
 			console.log(revIndex);
 		        setPhotoTarget(index);
 			var swiper = new Swiper('.swiper-container', { 
@@ -336,8 +337,7 @@ var CoreMobCamera = (function() {
 		}
 		
 		function gotPhotoInfo(data) {
-			data.title = "test";	
-			//data.title = util.stripHtml(window.prompt('Description:'));
+			data.title = util.stripHtml(window.prompt('Description:'));
 			
 			CoreMobCameraiDB.putPhotoInDB(data, addSuccess, blobFailure);
 			
@@ -371,8 +371,9 @@ var CoreMobCamera = (function() {
 			var dataUrl = canvas.toDataURL('image/jpeg');
 			
 			data.photo = util.dataUrlToBlob(dataUrl);
-			if(data.photo == null) { // Failed. storing dataURL string instead.
-				console.log('The browser does not support Blob Constructing.');
+			if(data.photo == null) {
+				console.log('Storing DataURL instead.');
+				isBlobSupported = false;
 				data.photo = canvas.toDataURL('image/jpeg');
 			}
 			callback(data);
