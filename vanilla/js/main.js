@@ -57,6 +57,7 @@ var CoreMobCamera = (function() {
 		CoreMobCameraiDB.openDB(dbSuccess, dbFailure);
 		function dbSuccess(dbPhotos) {
 			createGallery(dbPhotos);
+			document.getElementById('uploadButton').setAttribute('hidden', 'hidden');
 		}
 		function dbFailure() {
 			renderFirstRun();
@@ -298,7 +299,7 @@ var CoreMobCamera = (function() {
 
 		if(e.target.classList.contains('thumb')) {
 			var index = (e.target.dataset) ? parseInt(e.target.dataset.index) : parseInt(e.target.getAttribute('data-index'));
-			var revIndex = numPhotosSaved - index -1;
+			var revIndex = numPhotosSaved - index - 1;
 			console.log(revIndex);
 		        setPhotoTarget(index);
 			var swiper = new Swiper('.swiper-container', { 
@@ -329,44 +330,53 @@ var CoreMobCamera = (function() {
 		if(isBlobSupported === false) { 
 			// no blob support for iDB. Storing dataURL string instead of blob.
 			data.photo = canvas.toDataURL('image/jpeg');
+			gotPhotoInfo(data);
 		} 
 		else {
-			getBlobFromCanvas(canvas, data);
-		}
-		data.title = util.stripHtml(window.prompt('Description:'));
-		
-		CoreMobCameraiDB.putPhotoInDB(data, addSuccess, blobFailure);
-		
-		function addSuccess(dbPhotos){ console.log('addSuccess called');
-			numPhotosSaved++;
-			renderPhotos(dbPhotos);
-			reInit();
+			getBlobFromCanvas(canvas, data, gotPhotoInfo); // async callback
 		}
 		
-		function blobFailure() {
-			// pass Data URL instead of blob
-			isBlobSupported = false;
-			data.photo = canvas.toDataURL('image/jpeg');
+		function gotPhotoInfo(data) {
+			data.title = util.stripHtml(window.prompt('Description:'));
 			
-			CoreMobCameraiDB.putPhotoInDB(data, addSuccess);
+			CoreMobCameraiDB.putPhotoInDB(data, addSuccess, blobFailure);
 			
-			var warning = document.getElementById('warningIndexedDbBlob');
-			showUI(warning);
+			function addSuccess(dbPhotos){
+				numPhotosSaved++;
+				renderPhotos(dbPhotos);
+				reInit();
+			}
+			
+			function blobFailure() {
+				// pass Data URL instead of blob
+				isBlobSupported = false;
+				data.photo = canvas.toDataURL('image/jpeg');
+				
+				CoreMobCameraiDB.putPhotoInDB(data, addSuccess);
+				
+				var warning = document.getElementById('warningIndexedDbBlob');
+				showUI(warning);
+			}
 		}
+
     }
     
-    function getBlobFromCanvas(canvas, data) {
+    function getBlobFromCanvas(canvas, data, callback) {
 		if (canvas.toBlob) { //canvas.blob() supported. Store blob.
 			var blob = canvas.toBlob(function(blob){
 				data.photo = blob;
+				callback(data);
 			}, 'image/jpeg');
 		} else { // get Base64 dataurl from canvas, then convert it to Blob
 			var dataUrl = canvas.toDataURL('image/jpeg');
+			
 			data.photo = util.dataUrlToBlob(dataUrl);
-			if(data.photo == null) { // Failed. storing dataURL string instead.
-				console.log('The browser does not support Blob Constructing.');
+			if(data.photo == null) {
+				console.log('Storing DataURL instead.');
+				isBlobSupported = false;
 				data.photo = canvas.toDataURL('image/jpeg');
 			}
+			callback(data);
 		}
 	}
 	
