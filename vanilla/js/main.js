@@ -18,13 +18,12 @@ var CoreMobCamera = (function() {
 	
 	// UI
 	var loader = document.getElementById('loader'),
-		firstRun = document.getElementById('firstrun'),
+		firstRun = document.getElementById('firstrun'),		
+		originalPhoto = document.getElementById('originalPhoto'),
+		resultPhoto = document.getElementById('resultPhoto'),
 		sectionMain = document.getElementById('main'),
-		sectionPhotoCrop = document.getElementById('photoCrop'),
-		fileinfo = document.getElementById('fileinfo'),
 		sectionPhotoEffect = document.getElementById('photoEffect'),
 		sectionFilterDrawer = document.getElementById('filterDrawer'),
-		resultPhoto = document.getElementById('resultPhoto'),
 		sectionSingleView = document.getElementById('singleView'); 
 	
 	return {
@@ -153,38 +152,37 @@ var CoreMobCamera = (function() {
 			hideUI(sectionSingleView);
 		}, false);
 		
-		// Photo Crop
-		document.getElementById('cropCancel').addEventListener('click', cancelCrop, false);
-		document.getElementById('cropApply').addEventListener('click', applyCrop, false);	
-		
 		// Uploading a photo without storing in DB
 		document.getElementById('uploadButton').addEventListener('click', function(){
 			var data = {};
 
 			var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');
-			getBlobFromCanvas(canvas, data);
+			getBlobFromCanvas(canvas, data, gotPhotoInfo);
 
-			data.title = util.stripHtml(window.prompt('Description:'));			
+			function gotPhotoInfo(data) {
+				data.title = util.stripHtml(window.prompt('Description:'));			
 
-			if(typeof data.photo === 'object') {
-				startUpload(data);
+				if(typeof data.photo === 'object') {
+					startUpload(data);
+				}
 			}
+			
 		}, false);		
 		
 		// Uploading a photo
 		document.getElementById('shareButton').addEventListener('click', function(e){
 			e.preventDefault();
-		        var photoid = parseInt(e.target.getAttribute("data-photoid"), 10);
+		    var photoid = parseInt(e.target.getAttribute('data-photoid'), 10);
 
 			// get blob from db then send
-		        if (photoid) {
+		    if (photoid) {
 			    CoreMobCameraiDB.getPhotoFromDB(photoid, function(data) {
-				if (typeof data.photo === "string") {
-				    data.photo = util.dataUrlToBlob(data.photo);
-				}
-				if(data && typeof data.photo === 'object') {
-				    startUpload(data);
-				}
+					if (typeof data.photo === 'string') {
+					    data.photo = util.dataUrlToBlob(data.photo);
+					}
+					if(data && typeof data.photo === 'object') {
+					    startUpload(data);
+					}
 			    });
 			}			
 		}, false);	
@@ -203,7 +201,7 @@ var CoreMobCamera = (function() {
 				}
 			}
 			function deleteCallback() {
-				CoreMobCameraiDB.listPhotoFromDB(reRenderCallback);
+				CoreMobCameraiDB.listPhotosFromDB(reRenderCallback);
 				
 				function reRenderCallback(dbPhotos) {
 					document.querySelector('.thumbnail-wrapper').innerHTML = '';
@@ -222,33 +220,7 @@ var CoreMobCamera = (function() {
 			}		
 		}, false);
 	}
-    
-    function cancelCrop(e){
-		imgCrop.removeResult();
-		document.getElementById('userPhoto').src = '';
-		document.getElementById('filePickerContainer').reset();
-		
-		showUI(sectionMain);
-		hideUI(sectionPhotoCrop);
-	}
-	
-	function applyCrop(e){
-		var newImg = imgCrop.getDataURL();
-		resultPhoto.src = newImg;
-		resultPhoto.style.width = resultPhoto.style.height = viewWidth +'px';
-		
-		// Removing the previously created canvas, if any
-		var prevEffect = document.getElementById('filteredPhoto');
-		if(prevEffect) {	
-			prevEffect.parentNode.removeChild(prevEffect);
-			showUI(resultPhoto);
-		}
 
-		hideUI(sectionPhotoCrop);
-		showUI(sectionPhotoEffect);
-		showUI(sectionFilterDrawer);
-	}
-		
     function prepFilterEffect(e) {
     	var filterButton = getFilterButton(e.target);
 		if(!filterButton) return;
@@ -483,23 +455,32 @@ var CoreMobCamera = (function() {
 	function scrollInfinitely() {
 		// TO DO
 	}
-
+	
 	function cropAndResize() {
-		var photoObj = document.getElementById('userPhoto');
+		var photoObj = document.getElementById('originalPhoto');
 
 	    imgCrop = new PhotoCrop(photoObj, {
 			size: {w: finalPhotoDimension, h: finalPhotoDimension}
 	    });
 	    
-	    imgCrop.displayResult();
-	    
+		var newImg = imgCrop.getDataURL();
+		imgCrop.displayResult();
+		hideUI(document.getElementById('croppedPhoto')); //keep in DOM but not shown
+		
+		resultPhoto.src = newImg;
+		resultPhoto.style.width = resultPhoto.style.height = viewWidth +'px';
+		
+		// Removing the previously created canvas, if any
+		var prevEffect = document.getElementById('filteredPhoto');
+		if(prevEffect) {	
+			prevEffect.parentNode.removeChild(prevEffect);
+			showUI(resultPhoto);
+		}
+		
 		hideUI(sectionMain);
-		showUI(sectionPhotoCrop);
-		
-		document.getElementById('textDimension').textContent = finalPhotoDimension + ' x ' + finalPhotoDimension;
-		
-		var displayPhoto = document.getElementById('croppedPhoto');
-		displayPhoto.style.width = displayPhoto.style.height = viewWidth +'px';
+		showUI(sectionPhotoEffect);
+		showUI(sectionFilterDrawer);
+		hideUI(originalPhoto);
 	}
 	
 	/**
@@ -524,14 +505,14 @@ var CoreMobCamera = (function() {
 	    }
 	    
 		// display the selected image
-	    var orig = document.getElementById('userPhoto');
+	    var orig = document.getElementById('originalPhoto');
 	    var imgFile = new FileReader();
 	    
 		imgFile.onload = function(e){
 	        // e.target.result contains the Base64 DataURL
 	        orig.onload = function () {
 	        	cropAndResize();	        
-				displayFileInfo(localFile, orig);
+				//displayFileInfo(localFile, orig);
 				hideUI(loader);
 	        };
 	        orig.src = e.target.result;
@@ -540,12 +521,7 @@ var CoreMobCamera = (function() {
 	    imgFile.readAsDataURL(localFile);
 	}
 	
-	function displayFileInfo(file, img) {
-        showUI(fileinfo);
-        document.getElementById('filename').textContent = 'File name: ' + file.name;
-        document.getElementById('filedim').textContent = 'Original dimension was: ' + img.naturalWidth + ' x ' + img.naturalHeight;
-	}
-	
+
 	/**
 	 * Upload to server -- data should contains a blob
 	 */
@@ -571,7 +547,8 @@ var CoreMobCamera = (function() {
 	function uploadProgress(e) { 
 		console.log(e);
 		if (e.lengthComputable) {
-			loader.textContent = ((e.loaded / e.total * 100) >>> 0) + '%';
+			console.log(e.loaded / e.total * 100);
+			loader.innerHTML = '<p style="margin-top:-20px">Uploading...</p><p style="margin-top:-175px;">' + ((e.loaded / e.total * 100) >>> 0) + '%</p>';
 		} 
 	}
 
