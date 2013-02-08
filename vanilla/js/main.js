@@ -18,14 +18,12 @@ var CoreMobCamera = (function() {
 	
 	// UI
 	var loader = document.getElementById('loader'),
-		firstRun = document.getElementById('firstrun'),
-		sectionMain = document.getElementById('main'),
-		//sectionPhotoCrop = document.getElementById('photoCrop'),
-		fileinfo = document.getElementById('fileinfo'),
-		sectionPhotoEffect = document.getElementById('photoEffect'),
-		sectionFilterDrawer = document.getElementById('filterDrawer'),
+		firstRun = document.getElementById('firstrun'),		
 		originalPhoto = document.getElementById('originalPhoto'),
 		resultPhoto = document.getElementById('resultPhoto'),
+		sectionMain = document.getElementById('main'),
+		sectionPhotoEffect = document.getElementById('photoEffect'),
+		sectionFilterDrawer = document.getElementById('filterDrawer'),
 		sectionSingleView = document.getElementById('singleView'); 
 	
 	return {
@@ -154,15 +152,11 @@ var CoreMobCamera = (function() {
 			hideUI(sectionSingleView);
 		}, false);
 		
-		// Photo Crop
-		//document.getElementById('cropCancel').addEventListener('click', cancelCrop, false);
-		//document.getElementById('cropApply').addEventListener('click', applyCrop, false);	
-		
 		// Uploading a photo without storing in DB
 		document.getElementById('uploadButton').addEventListener('click', function(){
 			var data = {};
 
-			var canvas = document.getElementById('filteredPhoto'); //|| document.getElementById('croppedPhoto');
+			var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');
 			getBlobFromCanvas(canvas, data);
 
 			data.title = util.stripHtml(window.prompt('Description:'));			
@@ -298,7 +292,7 @@ var CoreMobCamera = (function() {
 	
     function savePhoto(e) {
     	var data = {};
-		var canvas = document.getElementById('filteredPhoto'); //|| document.getElementById('croppedPhoto');	
+		var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');	
 		
 		if(!canvas) return;
 		
@@ -458,36 +452,7 @@ var CoreMobCamera = (function() {
 	function scrollInfinitely() {
 		// TO DO
 	}
-
-	    
-/*
-    function cancelCrop(e){
-		imgCrop.removeResult();
-		document.getElementById('originalPhoto').src = '';
-		document.getElementById('filePickerContainer').reset();
-		
-		showUI(sectionMain);
-		hideUI(sectionPhotoCrop);
-	}
-
 	
-	function applyCrop(e){
-		var newImg = imgCrop.getDataURL();
-		resultPhoto.src = newImg;
-		resultPhoto.style.width = resultPhoto.style.height = viewWidth +'px';
-		
-		// Removing the previously created canvas, if any
-		var prevEffect = document.getElementById('filteredPhoto');
-		if(prevEffect) {	
-			prevEffect.parentNode.removeChild(prevEffect);
-			showUI(resultPhoto);
-		}
-
-		hideUI(sectionPhotoCrop);
-		showUI(sectionPhotoEffect);
-		showUI(sectionFilterDrawer);
-	}
-*/		
 	function cropAndResize() {
 		var photoObj = document.getElementById('originalPhoto');
 
@@ -495,17 +460,10 @@ var CoreMobCamera = (function() {
 			size: {w: finalPhotoDimension, h: finalPhotoDimension}
 	    });
 	    
-	    //imgCrop.displayResult();
-	    
-		hideUI(sectionMain);
-		//showUI(sectionPhotoCrop);
-		
-		//document.getElementById('textDimension').textContent = finalPhotoDimension + ' x ' + finalPhotoDimension;
-		
-		//var displayPhoto = document.getElementById('croppedPhoto');
-		//displayPhoto.style.width = displayPhoto.style.height = viewWidth +'px';
-		
 		var newImg = imgCrop.getDataURL();
+		imgCrop.displayResult();
+		hideUI(document.getElementById('croppedPhoto')); //keep in DOM but not shown
+		
 		resultPhoto.src = newImg;
 		resultPhoto.style.width = resultPhoto.style.height = viewWidth +'px';
 		
@@ -516,10 +474,10 @@ var CoreMobCamera = (function() {
 			showUI(resultPhoto);
 		}
 		
+		hideUI(sectionMain);
 		showUI(sectionPhotoEffect);
 		showUI(sectionFilterDrawer);
 		hideUI(originalPhoto);
-		originalPhoto.src = '';
 	}
 	
 	/**
@@ -560,14 +518,7 @@ var CoreMobCamera = (function() {
 	    imgFile.readAsDataURL(localFile);
 	}
 	
-/*
-	function displayFileInfo(file, img) {
-        showUI(fileinfo);
-        document.getElementById('filename').textContent = 'File name: ' + file.name;
-        document.getElementById('filedim').textContent = 'Original dimension was: ' + img.naturalWidth + ' x ' + img.naturalHeight;
-	}
-*/
-	
+
 	/**
 	 * Upload to server -- data should contains a blob
 	 */
