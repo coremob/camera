@@ -54,7 +54,7 @@ PhotoCrop.prototype = {
     },
     
     getDataURL: function() {
-	    return this.canvas.toDataURL('image/'+this.settings.format);
+	    return this.canvas.toDataURL('image/'+this.settings.format, .8);
     },
     
     displayResult: function() {

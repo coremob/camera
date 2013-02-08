@@ -317,14 +317,17 @@ figure {
 	color: #fff;
 	position: absolute;
 	top: 0;
-	line-height: 58px;
-	font-size: 1.4em;
+	padding-top: 12px;
+	font-size: 27px;
 }
 #singleView nav .back {
 	left: 10px;
 }
 #singleView nav .share {
 	right: 0;
+}
+#singleView nav .share span {
+	font-size: 20px;
 }
 #singleView {
 	text-align: center;
@@ -450,6 +453,18 @@ figure {
 	position: relative;
 	top: 18px;
 	left: 12px;
+}
+.share::before {
+	content: '';
+}
+.share::after {
+	font-family: 'icons';
+	content: attr(data-icon);
+	speak: none;
+	font-weight: normal;
+	line-height: 1;
+	padding: 0 0.5em;
+	-webkit-font-smoothing: antialiased;
 }
 .icon-warning::before {
 	color: #ffd900;

@@ -157,13 +157,16 @@ var CoreMobCamera = (function() {
 			var data = {};
 
 			var canvas = document.getElementById('filteredPhoto') || document.getElementById('croppedPhoto');
-			getBlobFromCanvas(canvas, data);
+			getBlobFromCanvas(canvas, data, gotPhotoInfo);
 
-			data.title = util.stripHtml(window.prompt('Description:'));			
+			function gotPhotoInfo(data) {
+				data.title = util.stripHtml(window.prompt('Description:'));			
 
-			if(typeof data.photo === 'object') {
-				startUpload(data);
+				if(typeof data.photo === 'object') {
+					startUpload(data);
+				}
 			}
+			
 		}, false);		
 		
 		// Uploading a photo
@@ -544,7 +547,8 @@ var CoreMobCamera = (function() {
 	function uploadProgress(e) { 
 		console.log(e);
 		if (e.lengthComputable) {
-			loader.textContent = ((e.loaded / e.total * 100) >>> 0) + '%';
+			console.log(e.loaded / e.total * 100);
+			loader.innerHTML = '<p style="margin-top:-20px">Uploading...</p><p style="margin-top:-175px;">' + ((e.loaded / e.total * 100) >>> 0) + '%</p>';
 		} 
 	}
 
