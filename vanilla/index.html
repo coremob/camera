@@ -51,7 +51,7 @@
 	    	</div>
 	    </section>
 	    
-	    <p style="position:fixed; bottom:30px; right:0; ;cursor:pointer; color:#aaa;" id="clearDB">[Test] Delete DB</p>
+	    <a style="position:fixed; bottom:50px; right:0; cursor:pointer; color:#aaa;" id="clearDB">[Test] Delete DB</a>
 	    
 	    <nav>
     		<div class="camera" data-icon="&#x235f;" onclick="document.getElementById('camera').click();return false;"></div>
@@ -69,34 +69,18 @@
 		<header>
 			<nav>
 				<a id="dismissSingleView" class="back" data-icon="&#x21a9;" href="index.html"></a>
-				<a id="shareButton" class="share" class="back" data-icon="&#x25b2;" href="index.html"></a>
+				<a id="shareButton" class="share" data-icon="&#x25b2;" href="index.html"><span>Upload to W3C</span></a>
 			</nav>
 		</header>
 		<div class="swiper-container"></div>
 		<div class="pagination"></div>
 	</section>
 	
-	<!-- Crop and Resize -->
-	<section id="photoCrop" hidden>
-		<div id="userPhotoContainer">
-			<img id="userPhoto" hidden/>
-		</div>
-		<div class="photoCropControls">
-			<div id="fileinfo" hidden>
-		        <div id="filename"></div>
-		        <div id="filedim"></div>
-		        <div>Cropped dimension is: <span id="textDimension"></span></div>
-		    </div>
-			<div class="action-buttons">
-				<button id="cropCancel" class="dismiss">Cancel</button>
-				<button id="cropApply">OK</button>
-			</div>
-		</div>
-	</section>
 	
 	<!-- Photo Preview -->
 	<section id="photoEffect" hidden>
 		<div id="photoResultContainer">
+			<img id="originalPhoto" hidden>
 			<img id="resultPhoto">
 		</div>	
 	
