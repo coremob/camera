@@ -2,7 +2,7 @@ var CoreMobCameraiDB = (function(){
 
 	var db;
 	
-	// Supported without prefix: IE10
+	// Supported without prefix: IE10, Moz16+
 	// Supported with Prefix: Chrome, BlackBerry 10 and Firefox Mobile 15
 	// Unsupported: Opera Mobile, iOS6 Safari 
 	
@@ -21,12 +21,13 @@ var CoreMobCameraiDB = (function(){
 		openDB: openDB,
 		deleteDB: deleteDB,
 		putPhotoInDB: putPhotoInDB,
-	        getPhotoFromDB: getPhotoFromDB,
+	    getPhotoFromDB: getPhotoFromDB,
 		listPhotosFromDB: listPhotosFromDB,
 		deletePhoto: deletePhoto
 	};
 
 	function deleteDB() {
+		db.close();
 		var req = indexedDB.deleteDatabase('coremobCamera');
 		req.onsuccess = function(e) {
 			console.log('Database is deleted: '+ e.result);
@@ -142,7 +143,7 @@ var CoreMobCameraiDB = (function(){
         var photos = [];
   
         cursorReq.onsuccess = function(e) {
-       	console.log(e.target);
+       	//console.log(e.target);
         	var cursor = e.target.result;
     	
         	if(cursor) {

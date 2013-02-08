@@ -174,17 +174,17 @@ var CoreMobCamera = (function() {
 		// Uploading a photo
 		document.getElementById('shareButton').addEventListener('click', function(e){
 			e.preventDefault();
-		        var photoid = parseInt(e.target.getAttribute("data-photoid"), 10);
+		    var photoid = parseInt(e.target.getAttribute('data-photoid'), 10);
 
 			// get blob from db then send
-		        if (photoid) {
+		    if (photoid) {
 			    CoreMobCameraiDB.getPhotoFromDB(photoid, function(data) {
-				if (typeof data.photo === "string") {
-				    data.photo = util.dataUrlToBlob(data.photo);
-				}
-				if(data && typeof data.photo === 'object') {
-				    startUpload(data);
-				}
+					if (typeof data.photo === 'string') {
+					    data.photo = util.dataUrlToBlob(data.photo);
+					}
+					if(data && typeof data.photo === 'object') {
+					    startUpload(data);
+					}
 			    });
 			}			
 		}, false);	
@@ -203,7 +203,7 @@ var CoreMobCamera = (function() {
 				}
 			}
 			function deleteCallback() {
-				CoreMobCameraiDB.listPhotoFromDB(reRenderCallback);
+				CoreMobCameraiDB.listPhotosFromDB(reRenderCallback);
 				
 				function reRenderCallback(dbPhotos) {
 					document.querySelector('.thumbnail-wrapper').innerHTML = '';

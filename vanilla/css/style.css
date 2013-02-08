@@ -50,13 +50,13 @@ header {
     overflow: hidden;
 }
 header h1 {
-    font-size: 1.5em;
+    font-size: 1.4em;
     font-weight: normal;
     line-height: 50px;
     color: #fff;
     text-shadow: 0 2px 2px rgba(0, 0, 0, .5); 
     margin: 0;
-    padding: 0 1em;
+    padding: 0 .5em;
 }
 a {
 	text-decoration: none;
@@ -194,6 +194,7 @@ button {
 }
 button,
 input[type="button"] {
+	-webkit-appearance: none;
     padding: 8px 24px;
     margin-right: 10px;
     border-radius: 6px;
@@ -343,11 +344,15 @@ figure {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-#singleView a {
+#singleView a.delete-photo {
 	position: absolute;
 	bottom: 0;
 	right: .5em;
 	color: #ababab;
+	cursor: pointer;
+}
+#singleView a.delete-photo:hover {
+	color: #ff1f97;
 }
 .pagination {
 	margin: .5em auto 1em;
@@ -424,11 +429,9 @@ figure {
 
 @font-face {
 	font-family: 'icons';
-	src:url('fonts/icons.eot');
-	src:url('fonts/icons.eot?#iefix') format('embedded-opentype'),
-		url('fonts/icons.svg#icons') format('svg'),
-		url('fonts/icons.woff') format('woff'),
-		url('fonts/icons.ttf') format('truetype');
+	src: url('fonts/icons.svg#icons') format('svg'),
+		 url('fonts/icons.woff') format('woff'),
+		 url('fonts/icons.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
