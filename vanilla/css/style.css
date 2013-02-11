@@ -342,7 +342,7 @@ figure {
 	bottom: 0;
 	text-align: left;
 	padding-left: .5em;
-	width: 100%;
+	width: 80%;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -359,6 +359,9 @@ figure {
 }
 .pagination {
 	margin: .5em auto 1em;
+	width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 /* Filter Effects */
