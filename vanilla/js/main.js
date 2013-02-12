@@ -135,11 +135,14 @@ var CoreMobCamera = (function() {
 		// Pop back to Main
 		window.addEventListener('popstate', function(e){
 			console.log(history.state);
-			if (history.state == undefined || history.state.stage == 'main') {
+			//if (history.state == undefined || history.state.stage == 'main') {
 				showUI(sectionMain);
 				hideUI(sectionSingleView);
+				hideUI(sectionPhotoEffect);
+				hideUI(sectionFilterDrawer);
+				
 				history.replaceState({stage: 'main'}, null);
-			}
+			//}
 		}, false);
 		
 		// popstate alternative
@@ -481,6 +484,8 @@ var CoreMobCamera = (function() {
 		showUI(sectionPhotoEffect);
 		showUI(sectionFilterDrawer);
 		hideUI(originalPhoto);
+		
+		history.pushState({stage: 'effectView'}, null);
 	}
 	
 	/**
@@ -560,11 +565,13 @@ var CoreMobCamera = (function() {
 
 	function uploadError(e) {
 		alert('An error occurred while uploading the file.');
+		hideUI(loader);	
 		console.log(e);
 	}
 	
 	function uploadAbort(e) {
 		alert('The upload has been aborted by the user or the connection has been dropped.');
+		hideUI(loader);	
 		console.log(e);
 	}
 	
