@@ -22,7 +22,7 @@ var util = (function() {
 	    // Blob() const supported on: FF13, Chrome 20, IE10, O 12.10, Safari 6
 	    window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
         
-        if (window.Blob && typeof Uint8Array === 'function') {
+        if (window.Blob && Uint8Array) {
         	console.log('using Blob constructor');
         	var intArray = new Uint8Array(arrayBuffer);
             for (i = 0; i < byteStr.length; i++) {
