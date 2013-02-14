@@ -31,13 +31,14 @@ var CoreMobCameraiDB = (function(){
 		var req = indexedDB.deleteDatabase('coremobCamera');
 		req.onsuccess = function(e) {
 			console.log('Database is deleted: '+ e.result);
-			alert('DB Deleted: Reload the page manually (temp)');
+			alert('Database deleted.');
+			document.location.reload(true);
 		};
 		req.onerror = function(e) {
 			console.log('Error deleting DB');
 		};
 		req.onblocked = function(e) {		
-			alert('Deleting DB Blocked: Reload the page manually.',e);
+			alert('Deleting DB blocked: Please reload.');
 			console.log('Deleting DB Blocked: ', e);
 		};
 	}
