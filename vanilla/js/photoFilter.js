@@ -1,57 +1,72 @@
 /*
-	Simple Photo Filters using Canvas
-	Reference: html5rocks.com/en/tutorials/canvas/imagefilters/
-*/
+ *	PhotoFilter,js: Simple Photo Filters using Canvas
+ *	Referenced: html5rocks.com/en/tutorials/canvas/imagefilters/
+ *
+ *  Last modified: March 1, 2014
+ */
 
-var PhotoFilter = function(imgObj) {
+var PhotoFilter = function(imgObj, output) {
 	this.imgObj = imgObj;
-							 
+	this.output = output;
+	
+	// Remove the revious
+	var prevFilteredPhoto = document.getElementById('filteredPhoto');
+	if(prevFilteredPhoto) {	
+		prevFilteredPhoto.parentNode.removeChild(prevFilteredPhoto);
+	}
+								 
     this.c = document.createElement('canvas');
-    this.c.id = 'filteredPhoto';
-    
-    var naturalImage = new Image();
-    	naturalImage.src = this.imgObj.getAttribute('src');
-    	
-    	// Get natural image dimension, rather than the displayed dimension.
-        this.c.width = naturalImage.width;
-        this.c.height = naturalImage.height;
-        
-        this.ctx = this.c.getContext('2d');
-        this.ctx.drawImage(this.imgObj, 0, 0);
+    this.c.id = 'filteredPhoto';    	
+	this.c.width = imgObj.naturalWidth;
+	this.c.height = imgObj.naturalHeight;
+	this.ctx = this.c.getContext('2d');
+	this.ctx.drawImage(imgObj, 0, 0);
 }
 
-PhotoFilter.prototype = {
-	applyLayer: function(layer) {
-		var layerImg = new Image();
-		layerImg.onload = function() {
-			this.ctx.drawImage(layerImg, 0, 0);
-		}.bind(this);
-		layerImg.src = layer;
-		this.render();
+PhotoFilter.prototype = {    
+	applyLayer: function(layerObj) {	
+		this.ctx.drawImage(layerObj, 0, 0, this.c.width, this.c.height);
 	},
 
     filterImage: function(filter, args) {
+    	if(this.pixelData) { // if multiple filters are applied
+	    	this.ctx.putImageData(this.pixelData, 0, 0);
+    	}
 	    var params = [this.ctx.getImageData(0, 0, this.c.width, this.c.height)];
 	   
 		for (var i = 1; i <arguments.length; i++) {
 			params.push(arguments[i]);
 		} 
 		this.pixelData =  this[filter].apply(this, params);
-		this.render();
     },
     
-    render: function() {
-    	if(this.pixelData) {
+    render: function(reset) {
+    	if(reset) {
+	    	this.ctx.drawImage(this.imgObj, 0, 0);
+    	} else if(this.pixelData) {
 	    	this.ctx.putImageData(this.pixelData, 0, 0);
     	}
-        this.imgObj.parentNode.appendChild(this.c);
+
+    	if(this.output) {
+	    	var newImgObj = this.createNewImgObj(this.output);
+			this.imgObj.parentNode.insertBefore(newImgObj, this.imgObj);
+    	} else {
+	    	this.imgObj.parentNode.insertBefore(this.c, this.imgObj);
+    	}
+        
         this.imgObj.setAttribute('hidden', 'hidden');
     },
     
+    createNewImgObj: function(format) {
+    	// Format has to be 'png', 'jpeg' or 'wepb', otherwise fall bacl to 'png'
+	    var img = document.createElement('img');
+		img.id = 'filteredPhoto';
+		img.src = this.c.toDataURL('image/'+format);
+		return img;
+	},
+    
     reset: function() {
-    	this.ctx.drawImage(this.imgObj, 0, 0);
-    	this.imgObj.parentNode.appendChild(this.c);
-        this.imgObj.setAttribute('hidden', 'hidden'); 
+		this.render('reset');
     },
 	
     grayscale: function(pixels, args) {
